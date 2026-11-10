@@ -1,0 +1,61 @@
+{{> app-head title="Stock Movements" active="inventory" subtitle="Full audit trail of every inventory change"}}
+
+<section class="grid grid-cols-2 gap-3 lg:grid-cols-5">
+  {{#each summary}}
+    <div class="card p-4">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">{{@key}}</p>
+      <p class="stat-value mt-1 text-xl">{{int this.count}}</p>
+      <p class="text-[11px] text-stone-500">{{int this.units}} units</p>
+    </div>
+  {{/each}}
+</section>
+
+<section class="card p-4">
+  <form method="GET" action="/pos/inventory/movements" class="grid gap-3 md:grid-cols-[minmax(0,1fr)_170px_170px_150px_150px_auto]">
+    <input type="search" name="q" value="{{filters.q}}" class="input" placeholder="Product, reference, reason or user…" />
+    <select name="type" class="select">
+      <option value="">All types</option>
+      {{#each types}}
+        <option value="{{this}}" {{selected this ../filters.type}}>{{this}}</option>
+      {{/each}}
+    </select>
+    <select name="product" class="select">
+      <option value="">All products</option>
+      {{#each products}}
+        <option value="{{this.id}}" {{selected this.id ../filters.product}}>{{this.name}}</option>
+      {{/each}}
+    </select>
+    <input type="date" name="from" value="{{filters.from}}" class="input" />
+    <input type="date" name="to" value="{{filters.to}}" class="input" />
+    <div class="flex gap-2">
+      <button type="submit" class="btn btn-dark">Filter</button>
+      <a href="/pos/inventory/movements" class="btn btn-light">Reset</a>
+    </div>
+  </form>
+</section>
+
+<section class="card overflow-hidden">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Qty</th><th>Stock change</th><th>Reference</th><th>Reason</th><th>Performed by</th></tr></thead>
+      <tbody>
+        {{#each movements}}
+          <tr>
+            <td class="whitespace-nowrap text-stone-500">{{datetime this.createdAt}}</td>
+            <td class="font-semibold text-stone-800">{{this.productName}}</td>
+            <td><span class="badge bg-stone-100 text-stone-600">{{this.type}}</span></td>
+            <td class="font-bold">{{int this.quantity}}</td>
+            <td class="whitespace-nowrap text-stone-500">{{int this.previousStock}} → <span class="font-semibold text-stone-700">{{int this.newStock}}</span></td>
+            <td class="font-mono text-[11px] text-stone-500">{{this.referenceNumber}}</td>
+            <td class="max-w-[260px] truncate text-stone-500" title="{{this.reason}}">{{this.reason}}</td>
+            <td class="text-stone-500">{{this.performedByName}}</td>
+          </tr>
+        {{else}}
+          <tr><td colspan="8" class="py-12 text-center text-sm text-stone-500">No movements match this filter.</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{{> app-foot}}

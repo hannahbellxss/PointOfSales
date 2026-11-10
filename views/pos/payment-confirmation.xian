@@ -1,0 +1,42 @@
+{{> app-head title="Payment Confirmed" active="terminal" subtitle="Sale recorded and inventory updated"}}
+
+<section class="mx-auto max-w-2xl">
+  <div class="card overflow-hidden">
+    <div class="bg-emerald-50 px-6 py-8 text-center">
+      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-700">✔</div>
+      <h2 class="mt-3 text-xl font-extrabold text-emerald-900">Payment successful</h2>
+      <p class="mt-1 text-sm text-emerald-700">Stock has been automatically deducted and the sale is recorded.</p>
+      <p class="mt-3 font-mono text-sm font-bold text-emerald-900">{{transaction.transactionNumber}}</p>
+    </div>
+
+    <div class="space-y-3 px-6 py-5 text-sm">
+      <div class="flex justify-between"><span class="text-stone-500">Order number</span><span class="font-semibold">{{transaction.orderNumber}}</span></div>
+      <div class="flex justify-between"><span class="text-stone-500">Order type</span><span class="font-semibold">{{transaction.order.orderType}}{{#if transaction.order.table}} · {{transaction.order.table.name}}{{/if}}</span></div>
+      <div class="flex justify-between"><span class="text-stone-500">Cashier</span><span class="font-semibold">{{transaction.cashierName}}</span></div>
+      <div class="flex justify-between"><span class="text-stone-500">Date &amp; time</span><span class="font-semibold">{{datetime transaction.createdAt}}</span></div>
+      {{#each transaction.payments}}
+        <div class="flex justify-between"><span class="text-stone-500">Payment method</span><span class="font-semibold">{{this.method}}</span></div>
+        <div class="flex justify-between"><span class="text-stone-500">Amount received</span><span class="font-semibold">{{money this.amountReceived}}</span></div>
+        <div class="flex justify-between"><span class="text-stone-500">Change</span><span class="font-semibold">{{money this.changeDue}}</span></div>
+        {{#if this.referenceNumber}}
+          <div class="flex justify-between"><span class="text-stone-500">Reference</span><span class="font-mono text-xs font-semibold">{{this.referenceNumber}}</span></div>
+        {{/if}}
+      {{/each}}
+      {{#each transaction.discounts}}
+        <div class="flex justify-between"><span class="text-stone-500">Discount applied</span><span class="font-semibold">{{this.name}} (−{{money this.amount}})</span></div>
+      {{/each}}
+      <div class="mt-2 flex justify-between border-t border-dashed border-stone-200 pt-3 text-base">
+        <span class="font-bold text-charcoal">Total paid</span>
+        <span class="font-extrabold text-ember">{{money transaction.totalAmount}}</span>
+      </div>
+    </div>
+
+    <div class="grid gap-2 border-t border-stone-200/80 bg-stone-50 px-6 py-4 sm:grid-cols-3">
+      <a href="/pos/receipts/{{transaction.id}}" target="_blank" class="btn btn-primary">View / Print Receipt</a>
+      <a href="/pos/terminal" class="btn btn-light">New Sale</a>
+      <a href="/pos/orders/{{transaction.orderId}}" class="btn btn-light">Order Details</a>
+    </div>
+  </div>
+</section>
+
+{{> app-foot}}

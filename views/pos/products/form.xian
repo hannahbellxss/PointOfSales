@@ -1,0 +1,177 @@
+{{> app-head title=title active="products" subtitle="Menu details, pricing and stock configuration"}}
+
+<div class="flex items-center gap-2 text-xs font-semibold text-stone-500">
+  <a href="/pos/products" class="hover:text-ember">Products</a>
+  <span>/</span>
+  <span class="text-stone-700">{{#if (eq mode "create")}}Add Product{{else}}Edit Product{{/if}}</span>
+</div>
+
+<form method="POST" action="{{#if (eq mode 'create')}}/pos/products{{else}}/pos/products/{{product.id}}{{/if}}" enctype="application/x-www-form-urlencoded" class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(300px,1fr)]" data-submit-once>
+  <div class="space-y-6">
+    <section class="card p-5">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500">Product Information</h2>
+      <div class="mt-4 grid gap-4">
+        <div>
+          <label class="label" for="name">Product name *</label>
+          <input id="name" name="name" required minlength="2" maxlength="160" class="input" placeholder="e.g. Chicken Adobo Rice Meal"
+            value="{{product.name}}" />
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="label" for="categoryId">Category *</label>
+            <select id="categoryId" name="categoryId" required class="select">
+              <option value="">Select category</option>
+              {{#each categories}}
+                <option value="{{this.id}}" {{selected this.id ../product.categoryId}}>{{this.name}}</option>
+              {{/each}}
+            </select>
+            {{#unless categories.length}}
+              <p class="mt-1 text-xs text-red-600">Create a category first.</p>
+            {{/unless}}
+          </div>
+          <div>
+            <label class="label" for="type">Product type *</label>
+            <select id="type" name="type" class="select" required>
+              {{#each productTypes}}
+                <option value="{{this}}" {{selected this ../product.type}}>{{this}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="label" for="description">Description</label>
+          <textarea id="description" name="description" rows="3" maxlength="1000" class="textarea" placeholder="Short description shown on the POS">{{product.description}}</textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500">Pricing &amp; Inventory</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="label" for="price">Selling price *</label>
+          <input id="price" name="price" type="number" step="0.01" min="0.01" max="999999.99" required class="input"
+            value="{{#if product}}{{product.price}}{{/if}}" placeholder="0.00" />
+        </div>
+        <div>
+          <label class="label" for="unit">Unit of measurement *</label>
+          <input id="unit" name="unit" maxlength="24" required class="input" placeholder="pcs / plate / cup"
+            value="{{#if product.inventory}}{{product.inventory.unit}}{{else}}pcs{{/if}}" />
+        </div>
+        <div>
+          <label class="label" for="minStockLevel">Minimum stock level *</label>
+          <input id="minStockLevel" name="minStockLevel" type="number" min="0" step="1" required class="input"
+            value="{{#if product.inventory}}{{product.inventory.minStockLevel}}{{else}}5{{/if}}" />
+          <p class="mt-1 text-[11px] text-stone-400">Products at or below this level are flagged as Low Stock.</p>
+        </div>
+        {{#if (eq mode "create")}}
+          <div>
+            <label class="label" for="initialStock">Initial stock</label>
+            <input id="initialStock" name="initialStock" type="number" min="0" step="1" value="0" class="input" />
+            <p class="mt-1 text-[11px] text-stone-400">Recorded as a Stock In movement.</p>
+          </div>
+        {{else}}
+          <div>
+            <label class="label">Current stock</label>
+            <div class="rounded-xl border border-stone-200 bg-stone-50 px-3 py-2.5 text-sm font-bold text-stone-700">
+              {{int product.inventory.currentStock}} {{product.inventory.unit}}
+            </div>
+            <p class="mt-1 text-[11px] text-stone-400">
+              Stock changes only through Stock In / Out / Adjustment.
+              <a href="/pos/inventory/stock-in?product={{product.id}}" class="font-semibold text-ember hover:underline">Record movement</a>
+            </p>
+          </div>
+        {{/if}}
+      </div>
+
+      <label class="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-stone-200 px-3.5 py-3">
+        <input type="checkbox" name="availability" class="h-4 w-4 rounded border-stone-300 text-ember focus:ring-ember"
+          {{#if (eq mode "create")}}checked{{else}}{{#if product.availability}}checked{{/if}}{{/if}} />
+        <span>
+          <span class="block text-sm font-semibold text-stone-800">Available for sale</span>
+          <span class="block text-[11px] text-stone-500">Unavailable products are hidden from the POS terminal.</span>
+        </span>
+      </label>
+    </section>
+  </div>
+
+  <div class="space-y-6">
+    <section class="card p-5">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500">Product Image</h2>
+      <div class="mt-4">
+        <div id="image-preview" class="flex h-44 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-stone-300 bg-stone-50">
+          {{#if product.image}}
+            <img id="preview-img" src="{{product.image}}" alt="{{product.name}}" class="h-full w-full object-cover" />
+          {{else}}
+            <span id="preview-placeholder" class="text-center text-xs text-stone-400">JPG, PNG, WEBP or GIF<br />up to 2 MB</span>
+          {{/if}}
+        </div>
+        <input id="image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="mt-3 block w-full text-xs text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-charcoal file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white" />
+        <input type="hidden" id="image-data" name="imageData" value="" />
+        {{#if product.image}}
+          <button type="button" id="remove-image" class="mt-2 text-xs font-semibold text-red-600 hover:underline">Remove image</button>
+        {{/if}}
+        <p id="image-error" class="mt-2 hidden text-xs font-semibold text-red-600"></p>
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500">Actions</h2>
+      <div class="mt-4 space-y-2">
+        <button type="submit" class="btn btn-primary w-full py-2.5">
+          {{#if (eq mode "create")}}Save Product{{else}}Update Product{{/if}}
+        </button>
+        <a href="/pos/products" class="btn btn-light w-full">Cancel</a>
+      </div>
+      {{#if (eq mode "edit")}}
+        <p class="mt-3 text-[11px] text-stone-400">Last updated {{datetime product.updatedAt}}</p>
+      {{/if}}
+    </section>
+  </div>
+</form>
+
+<script>
+  const fileInput = document.getElementById("image-file");
+  const imageData = document.getElementById("image-data");
+  const preview = document.getElementById("image-preview");
+  const errorBox = document.getElementById("image-error");
+  const MAX_BYTES = 2 * 1024 * 1024;
+
+  if (fileInput) {
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      errorBox.classList.add("hidden");
+
+      if (!file.type.startsWith("image/")) {
+        errorBox.textContent = "Please choose an image file.";
+        errorBox.classList.remove("hidden");
+        fileInput.value = "";
+        return;
+      }
+      if (file.size > MAX_BYTES) {
+        errorBox.textContent = "Image is larger than 2 MB.";
+        errorBox.classList.remove("hidden");
+        fileInput.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        imageData.value = reader.result;
+        preview.innerHTML = `<img src="${reader.result}" alt="Preview" class="h-full w-full object-cover" />`;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const removeButton = document.getElementById("remove-image");
+  if (removeButton) {
+    removeButton.addEventListener("click", () => {
+      imageData.value = "__REMOVE__";
+      preview.innerHTML = `<span class="text-center text-xs text-stone-400">Image removed<br />Save to apply</span>`;
+    });
+  }
+</script>
+
+{{> app-foot}}

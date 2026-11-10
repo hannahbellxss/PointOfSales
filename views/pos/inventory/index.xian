@@ -1,0 +1,80 @@
+{{> app-head title="Inventory Overview" active="inventory" subtitle="Live stock levels for every active product"}}
+
+<section class="grid grid-cols-2 gap-3 lg:grid-cols-5">
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Products</p><p class="stat-value mt-1 text-xl">{{int summary.totalProducts}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Units On Hand</p><p class="stat-value mt-1 text-xl">{{int summary.totalUnits}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Stock Value</p><p class="stat-value mt-1 text-xl">{{money summary.stockValue}}</p></div>
+  <a href="/pos/inventory/low-stock" class="card p-4 transition hover:shadow-md"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Low Stock</p><p class="stat-value mt-1 text-xl {{#if summary.lowStock}}text-amber-600{{/if}}">{{int summary.lowStock}}</p></a>
+  <a href="/pos/inventory/out-of-stock" class="card p-4 transition hover:shadow-md"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Out of Stock</p><p class="stat-value mt-1 text-xl {{#if summary.outOfStock}}text-red-600{{/if}}">{{int summary.outOfStock}}</p></a>
+</section>
+
+<section class="card p-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <form method="GET" action="/pos/inventory" class="flex flex-1 flex-wrap gap-3">
+      <input type="search" name="q" value="{{filters.q}}" class="input min-w-[180px] flex-1" placeholder="Search product or category…" />
+      <select name="category" class="select max-w-[180px]">
+        <option value="">All categories</option>
+        {{#each categories}}
+          <option value="{{this.id}}" {{selected this.id ../filters.categoryId}}>{{this.name}}</option>
+        {{/each}}
+      </select>
+      <select name="status" class="select max-w-[160px]">
+        <option value="">All status</option>
+        <option value="in" {{selected "in" filters.status}}>In stock</option>
+        <option value="low" {{selected "low" filters.status}}>Low stock</option>
+        <option value="out" {{selected "out" filters.status}}>Out of stock</option>
+      </select>
+      <button type="submit" class="btn btn-dark">Filter</button>
+      <a href="/pos/inventory" class="btn btn-light">Reset</a>
+    </form>
+    {{#can "inventory.manage"}}
+      <div class="flex gap-2">
+        <a href="/pos/inventory/stock-in" class="btn btn-primary">+ Stock In</a>
+        <a href="/pos/inventory/adjustment" class="btn btn-light">Adjust</a>
+      </div>
+    {{/can}}
+  </div>
+</section>
+
+<section class="card overflow-hidden">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>Product</th><th>Category</th><th>On hand</th><th>Minimum</th><th>Status</th><th>Last updated</th><th class="text-right">Min level</th></tr>
+      </thead>
+      <tbody>
+        {{#each rows}}
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-stone-100">
+                  {{#if this.image}}<img src="{{this.image}}" alt="" class="h-full w-full object-cover" />{{else}}<div class="flex h-full w-full items-center justify-center text-sm">📦</div>{{/if}}
+                </div>
+                <a href="/pos/inventory/{{this.productId}}" class="font-bold text-charcoal hover:text-ember">{{this.name}}</a>
+              </div>
+            </td>
+            <td class="text-stone-500">{{#if this.categoryName}}{{this.categoryName}}{{else}}—{{/if}}</td>
+            <td class="font-bold text-stone-800">{{int this.currentStock}} <span class="text-[11px] font-normal text-stone-400">{{this.unit}}</span></td>
+            <td class="text-stone-500">{{int this.minStockLevel}}</td>
+            <td><span class="badge {{badge this.stockStatus}}">{{this.stockStatus}}</span></td>
+            <td class="text-stone-500">{{datetime this.lastUpdated}}</td>
+            <td>
+              {{#can "inventory.manage"}}
+                <form method="POST" action="/pos/inventory/{{this.productId}}/min-level" class="flex items-center justify-end gap-1.5">
+                  <input type="number" name="minStockLevel" min="0" step="1" value="{{this.minStockLevel}}" class="w-20 rounded-lg border border-stone-300 px-2 py-1 text-xs" />
+                  <button type="submit" class="btn btn-light px-2 py-1 text-[11px]">Save</button>
+                </form>
+              {{else}}
+                <span class="block text-right text-stone-400">{{int this.minStockLevel}}</span>
+              {{/can}}
+            </td>
+          </tr>
+        {{else}}
+          <tr><td colspan="7" class="py-12 text-center text-sm text-stone-500">No inventory records match this filter.</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{{> app-foot}}

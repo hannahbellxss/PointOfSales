@@ -1,0 +1,301 @@
+{{> app-head title="POS Terminal" active="terminal" subtitle="Build the order, then proceed to checkout"}}
+
+<div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
+  <section class="space-y-4">
+    <div class="card space-y-3 p-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="relative min-w-[200px] flex-1">
+          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">🔍</span>
+          <input id="product-search" type="search" class="input pl-9" placeholder="Search the menu…" autocomplete="off" />
+        </div>
+        <select id="category-filter" class="select max-w-[220px]">
+          <option value="">All categories</option>
+          {{#each categories}}
+            <option value="{{this.id}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+        <span id="product-count" class="rounded-lg bg-stone-100 px-3 py-1.5 text-xs font-semibold text-stone-600">{{catalog.length}} items</span>
+      </div>
+      <div class="flex flex-wrap gap-2" id="category-chips">
+        <button type="button" data-category="" class="category-chip rounded-full bg-charcoal px-3.5 py-1.5 text-xs font-semibold text-white">All</button>
+        {{#each categories}}
+          <button type="button" data-category="{{this.id}}" class="category-chip rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-stone-600">{{this.name}}</button>
+        {{/each}}
+      </div>
+    </div>
+
+    <div id="product-grid" class="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3"></div>
+    <div id="empty-products" class="card hidden p-10 text-center">
+      <p class="text-3xl">🍽️</p>
+      <p class="mt-2 text-sm font-semibold text-stone-700">No products match this view</p>
+      <p class="text-xs text-stone-500">Try a different search or category.</p>
+    </div>
+  </section>
+
+  <aside class="card overflow-hidden xl:sticky xl:top-24">
+    <div class="border-b border-stone-200/80 px-5 py-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-charcoal">Current Order</h2>
+        <span id="cart-count" class="rounded-full bg-ember-50 px-2.5 py-1 text-xs font-bold text-ember">0 items</span>
+      </div>
+      <div class="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-stone-100 p-1">
+        <button type="button" data-order-type="Dine-In" class="order-type rounded-lg py-1.5 text-xs font-bold text-white">Dine-In</button>
+        <button type="button" data-order-type="Take-Out" class="order-type rounded-lg py-1.5 text-xs font-bold text-stone-500">Take-Out</button>
+      </div>
+    </div>
+
+    <div id="cart-items" class="max-h-[42vh] overflow-y-auto px-3 py-2"></div>
+
+    <div class="border-t border-stone-200/80 px-5 py-4">
+      <dl class="space-y-1.5 text-sm">
+        <div class="flex justify-between text-stone-500"><dt>Subtotal</dt><dd id="cart-subtotal" class="font-semibold text-stone-700">{{posSettings.currency}}0.00</dd></div>
+        {{#if posSettings.serviceChargeRate}}
+          <div class="flex justify-between text-stone-500"><dt>Service charge ({{posSettings.serviceChargeRate}}%)</dt><dd id="cart-service" class="font-semibold text-stone-700">{{posSettings.currency}}0.00</dd></div>
+        {{/if}}
+        {{#if posSettings.taxRate}}
+          <div class="flex justify-between text-stone-500"><dt>Tax ({{posSettings.taxRate}}%)</dt><dd id="cart-tax" class="font-semibold text-stone-700">{{posSettings.currency}}0.00</dd></div>
+        {{/if}}
+        <div class="flex justify-between border-t border-dashed border-stone-200 pt-2 text-base"><dt class="font-bold text-charcoal">Total</dt><dd id="cart-total" class="font-extrabold text-ember">{{posSettings.currency}}0.00</dd></div>
+      </dl>
+
+      <label class="label mt-4" for="order-note">Order note (optional)</label>
+      <textarea id="order-note" rows="2" class="textarea" placeholder="e.g. no onions, extra rice…" maxlength="500"></textarea>
+
+      <form id="order-form" method="POST" action="/pos/orders" class="mt-4" data-submit-once>
+        <input type="hidden" name="items" id="items-input" value="[]" />
+        <input type="hidden" name="orderType" id="order-type-input" value="Dine-In" />
+        <input type="hidden" name="note" id="note-input" value="" />
+        <button type="submit" id="checkout-button" class="btn btn-primary w-full py-3 text-sm" disabled>
+          Proceed to Checkout
+        </button>
+      </form>
+      <button type="button" id="clear-cart" class="mt-2 w-full rounded-lg py-1.5 text-xs font-semibold text-stone-500 hover:bg-stone-50 hover:text-red-600">
+        Clear cart
+      </button>
+    </div>
+  </aside>
+</div>
+
+<script>
+  const PRODUCTS = {{{json catalog}}};
+  const SETTINGS = {
+    currency: {{{json posSettings.currency}}},
+    taxRate: {{posSettings.taxRate}},
+    serviceChargeRate: {{posSettings.serviceChargeRate}}
+  };
+
+  const state = {
+    cart: new Map(),
+    search: "",
+    category: "",
+    orderType: "Dine-In"
+  };
+
+  const money = (value) =>
+    SETTINGS.currency + Number(value || 0).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+  const productById = new Map(PRODUCTS.map((product) => [Number(product.id), product]));
+
+  function visibleProducts() {
+    return PRODUCTS.filter((product) => {
+      const matchesSearch = !state.search ||
+        product.name.toLowerCase().includes(state.search) ||
+        (product.category || "").toLowerCase().includes(state.search);
+      const matchesCategory = !state.category || String(product.categoryId) === String(state.category);
+      return matchesSearch && matchesCategory;
+    });
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById("product-grid");
+    const empty = document.getElementById("empty-products");
+    const list = visibleProducts();
+
+    document.getElementById("product-count").textContent = `${list.length} item${list.length === 1 ? "" : "s"}`;
+    empty.classList.toggle("hidden", list.length > 0);
+
+    grid.innerHTML = list.map((product) => {
+      const inCart = state.cart.get(product.id) || 0;
+      const available = product.stock - inCart;
+      const soldOut = product.stock <= 0;
+      return `
+        <button type="button" data-product="${product.id}" ${soldOut ? "disabled" : ""}
+          class="group relative flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white text-left transition ${soldOut ? "opacity-60" : "hover:-translate-y-0.5 hover:border-ember/50 hover:shadow-md"}">
+          <div class="relative h-28 w-full bg-stone-100">
+            ${product.image
+              ? `<img src="${product.image}" alt="${product.name}" class="h-full w-full object-cover" />`
+              : `<div class="flex h-full w-full items-center justify-center text-3xl">🍽️</div>`}
+            <span class="absolute right-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${soldOut ? "bg-red-100 text-red-700" : available <= 5 ? "bg-amber-100 text-amber-800" : "bg-white/90 text-stone-700"}">
+              ${soldOut ? "Out of stock" : `${available} ${product.unit}`}
+            </span>
+          </div>
+          <div class="flex flex-1 flex-col p-3">
+            <p class="line-clamp-2 text-sm font-bold leading-snug text-charcoal">${product.name}</p>
+            <p class="mt-0.5 text-[11px] text-stone-400">${product.category}</p>
+            <div class="mt-2 flex items-center justify-between">
+              <span class="text-sm font-extrabold text-ember">${money(product.price)}</span>
+              ${inCart ? `<span class="rounded-full bg-charcoal px-2 py-0.5 text-[10px] font-bold text-white">${inCart} in cart</span>` : ""}
+            </div>
+          </div>
+        </button>`;
+    }).join("");
+  }
+
+  function renderCart() {
+    const container = document.getElementById("cart-items");
+    const lines = [...state.cart.entries()];
+
+    if (!lines.length) {
+      container.innerHTML = `
+        <div class="px-2 py-10 text-center">
+          <p class="text-3xl">🛒</p>
+          <p class="mt-2 text-sm font-semibold text-stone-700">Cart is empty</p>
+          <p class="text-xs text-stone-500">Tap a product to start the order.</p>
+        </div>`;
+    } else {
+      container.innerHTML = lines.map(([id, quantity]) => {
+        const product = productById.get(Number(id));
+        if (!product) return "";
+        return `
+          <div class="flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-stone-50">
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-semibold text-stone-800">${product.name}</p>
+              <p class="text-[11px] text-stone-500">${money(product.price)} × ${quantity} = <span class="font-semibold text-stone-700">${money(product.price * quantity)}</span></p>
+            </div>
+            <div class="flex items-center gap-1 rounded-lg border border-stone-200 p-0.5">
+              <button type="button" data-decrease="${id}" class="h-6 w-6 rounded text-sm font-bold text-stone-500 hover:bg-stone-100">−</button>
+              <span class="w-6 text-center text-xs font-bold">${quantity}</span>
+              <button type="button" data-increase="${id}" class="h-6 w-6 rounded text-sm font-bold text-stone-500 hover:bg-stone-100" ${quantity >= product.stock ? "disabled" : ""}>+</button>
+            </div>
+            <button type="button" data-remove="${id}" class="h-7 w-7 rounded text-xs text-stone-400 hover:bg-red-50 hover:text-red-600" title="Remove">✕</button>
+          </div>`;
+      }).join("");
+    }
+
+    const subtotal = lines.reduce((sum, [id, quantity]) => {
+      const product = productById.get(Number(id));
+      return sum + (product ? product.price * quantity : 0);
+    }, 0);
+    const service = subtotal * (SETTINGS.serviceChargeRate / 100);
+    const tax = (subtotal + service) * (SETTINGS.taxRate / 100);
+    const total = subtotal + service + tax;
+    const itemCount = lines.reduce((sum, [, quantity]) => sum + quantity, 0);
+
+    document.getElementById("cart-subtotal").textContent = money(subtotal);
+    if (document.getElementById("cart-service")) document.getElementById("cart-service").textContent = money(service);
+    if (document.getElementById("cart-tax")) document.getElementById("cart-tax").textContent = money(tax);
+    document.getElementById("cart-total").textContent = money(total);
+    document.getElementById("cart-count").textContent = `${itemCount} item${itemCount === 1 ? "" : "s"}`;
+
+    const checkout = document.getElementById("checkout-button");
+    checkout.disabled = lines.length === 0;
+    checkout.classList.toggle("opacity-50", lines.length === 0);
+
+    renderProducts();
+  }
+
+  function addToCart(id) {
+    const product = productById.get(Number(id));
+    if (!product) return;
+    const current = state.cart.get(product.id) || 0;
+    if (current + 1 > product.stock) {
+      window.alert(`Only ${product.stock} ${product.unit} of ${product.name} available.`);
+      return;
+    }
+    state.cart.set(product.id, current + 1);
+    renderCart();
+  }
+
+  document.getElementById("product-grid").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-product]");
+    if (button) addToCart(button.dataset.product);
+  });
+
+  document.getElementById("cart-items").addEventListener("click", (event) => {
+    const increase = event.target.closest("[data-increase]");
+    const decrease = event.target.closest("[data-decrease]");
+    const remove = event.target.closest("[data-remove]");
+
+    if (increase) addToCart(increase.dataset.increase);
+    if (decrease) {
+      const id = Number(decrease.dataset.decrease);
+      const next = (state.cart.get(id) || 0) - 1;
+      if (next <= 0) state.cart.delete(id); else state.cart.set(id, next);
+      renderCart();
+    }
+    if (remove) {
+      state.cart.delete(Number(remove.dataset.remove));
+      renderCart();
+    }
+  });
+
+  document.getElementById("product-search").addEventListener("input", (event) => {
+    state.search = event.target.value.trim().toLowerCase();
+    renderProducts();
+  });
+
+  document.getElementById("category-filter").addEventListener("change", (event) => {
+    state.category = event.target.value;
+    document.querySelectorAll(".category-chip").forEach((chip) => {
+      chip.dataset.category === state.category ? activateChip(chip) : deactivateChip(chip);
+    });
+    renderProducts();
+  });
+
+  function activateChip(chip) {
+    chip.className = "category-chip rounded-full bg-charcoal px-3.5 py-1.5 text-xs font-semibold text-white";
+  }
+  function deactivateChip(chip) {
+    chip.className = "category-chip rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-stone-600";
+  }
+
+  document.getElementById("category-chips").addEventListener("click", (event) => {
+    const chip = event.target.closest(".category-chip");
+    if (!chip) return;
+    state.category = chip.dataset.category;
+    document.getElementById("category-filter").value = state.category;
+    document.querySelectorAll(".category-chip").forEach((item) =>
+      item === chip ? activateChip(item) : deactivateChip(item)
+    );
+    renderProducts();
+  });
+
+  function setOrderType(type) {
+    state.orderType = type;
+    document.getElementById("order-type-input").value = type;
+    document.querySelectorAll(".order-type").forEach((button) => {
+      const active = button.dataset.orderType === type;
+      button.className = `order-type rounded-lg py-1.5 text-xs font-bold ${active ? "bg-white text-charcoal shadow-sm" : "text-stone-500"}`;
+    });
+  }
+
+  document.querySelectorAll(".order-type").forEach((button) => {
+    button.addEventListener("click", () => setOrderType(button.dataset.orderType));
+  });
+
+  document.getElementById("clear-cart").addEventListener("click", () => {
+    if (!state.cart.size) return;
+    if (!window.confirm("Remove all items from the cart?")) return;
+    state.cart.clear();
+    renderCart();
+  });
+
+  document.getElementById("order-form").addEventListener("submit", (event) => {
+    if (!state.cart.size) {
+      event.preventDefault();
+      return;
+    }
+    document.getElementById("items-input").value = JSON.stringify(
+      [...state.cart.entries()].map(([productId, quantity]) => ({ productId, quantity }))
+    );
+    document.getElementById("note-input").value = document.getElementById("order-note").value;
+  });
+
+  setOrderType("Dine-In");
+  renderCart();
+</script>
+
+{{> app-foot}}

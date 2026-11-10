@@ -1,0 +1,103 @@
+{{> app-head title="Inventory Reports" active="reports-inventory" subtitle="Stock position and movement activity"}}
+
+<section class="card p-4">
+  <form method="GET" action="/pos/reports/inventory" class="flex flex-wrap items-end gap-3">
+    <div>
+      <label class="label" for="period">Movement period</label>
+      <select id="period" name="period" class="select w-40">
+        <option value="today" {{selected "today" range.period}}>Today</option>
+        <option value="week" {{selected "week" range.period}}>Last 7 days</option>
+        <option value="month" {{selected "month" range.period}}>This month</option>
+        <option value="year" {{selected "year" range.period}}>This year</option>
+        <option value="custom" {{selected "custom" range.period}}>Custom range</option>
+      </select>
+    </div>
+    <div>
+      <label class="label" for="from">From</label>
+      <input id="from" type="date" name="from" value="{{range.from}}" class="input" />
+    </div>
+    <div>
+      <label class="label" for="to">To</label>
+      <input id="to" type="date" name="to" value="{{range.to}}" class="input" />
+    </div>
+    <button type="submit" class="btn btn-dark">Generate</button>
+    <a href="/pos/reports/export?type=inventory&period={{range.period}}&from={{range.from}}&to={{range.to}}" class="btn btn-light">⬇ Stock CSV</a>
+    <a href="/pos/reports/export?type=movements&period={{range.period}}&from={{range.from}}&to={{range.to}}" class="btn btn-light">⬇ Movements CSV</a>
+    <button type="button" onclick="window.print()" class="btn btn-light">Print</button>
+  </form>
+</section>
+
+<section class="grid grid-cols-2 gap-3 lg:grid-cols-5">
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Products</p><p class="stat-value mt-1 text-lg">{{int totals.products}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Units on hand</p><p class="stat-value mt-1 text-lg">{{int totals.units}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Stock value</p><p class="stat-value mt-1 text-lg">{{money totals.value}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Low stock</p><p class="stat-value mt-1 text-lg text-amber-600">{{int totals.low}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Out of stock</p><p class="stat-value mt-1 text-lg text-red-600">{{int totals.out}}</p></div>
+</section>
+
+<section class="grid grid-cols-2 gap-3 lg:grid-cols-5">
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Stock In</p><p class="stat-value mt-1 text-lg">{{int movementStats.stockIn.count}}</p><p class="text-[11px] text-stone-500">{{int movementStats.stockIn.units}} units</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Stock Out</p><p class="stat-value mt-1 text-lg">{{int movementStats.stockOut.count}}</p><p class="text-[11px] text-stone-500">{{int movementStats.stockOut.units}} units</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Sales Deduction</p><p class="stat-value mt-1 text-lg">{{int movementStats.salesDeduction.count}}</p><p class="text-[11px] text-stone-500">{{int movementStats.salesDeduction.units}} units</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Adjustments</p><p class="stat-value mt-1 text-lg">{{int movementStats.adjustment.count}}</p><p class="text-[11px] text-stone-500">{{int movementStats.adjustment.units}} units</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Void / Reversal</p><p class="stat-value mt-1 text-lg">{{int movementStats.voidReversal.count}}</p><p class="text-[11px] text-stone-500">{{int movementStats.voidReversal.units}} units</p></div>
+</section>
+
+<section class="card overflow-hidden">
+  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200/80 px-5 py-4">
+    <div>
+      <h2 class="text-base font-bold text-charcoal">Current Stock Report</h2>
+      <p class="text-xs text-stone-500">Snapshot of live inventory</p>
+    </div>
+    <a href="/pos/inventory" class="text-xs font-semibold text-ember hover:underline">Manage inventory →</a>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Product</th><th>Category</th><th>On hand</th><th>Minimum</th><th>Status</th><th>Unit price</th><th class="text-right">Stock value</th></tr></thead>
+      <tbody>
+        {{#each rows}}
+          <tr>
+            <td class="font-semibold text-stone-800">{{this.name}}</td>
+            <td class="text-stone-500">{{#if this.categoryName}}{{this.categoryName}}{{else}}—{{/if}}</td>
+            <td class="font-bold">{{int this.currentStock}} <span class="text-[11px] font-normal text-stone-400">{{this.unit}}</span></td>
+            <td class="text-stone-500">{{int this.minStockLevel}}</td>
+            <td><span class="badge {{statusBadge this.status}}">{{this.status}}</span></td>
+            <td class="text-stone-600">{{money this.price}}</td>
+            <td class="text-right font-bold">{{money this.value}}</td>
+          </tr>
+        {{else}}
+          <tr><td colspan="7" class="py-10 text-center text-sm text-stone-500">No active products yet.</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card overflow-hidden">
+  <div class="border-b border-stone-200/80 px-5 py-4">
+    <h2 class="text-base font-bold text-charcoal">Movement Report</h2>
+    <p class="text-xs text-stone-500">{{range.from}} → {{range.to}} · latest 100 movements</p>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Qty</th><th>Stock</th><th>Reference</th><th>By</th></tr></thead>
+      <tbody>
+        {{#each movements}}
+          <tr>
+            <td class="whitespace-nowrap text-stone-500">{{datetime this.createdAt}}</td>
+            <td class="font-semibold text-stone-800">{{this.productName}}</td>
+            <td><span class="badge bg-stone-100 text-stone-600">{{this.type}}</span></td>
+            <td class="font-bold">{{int this.quantity}}</td>
+            <td class="text-stone-500">{{int this.previousStock}} → {{int this.newStock}}</td>
+            <td class="font-mono text-[11px] text-stone-500">{{this.referenceNumber}}</td>
+            <td class="text-stone-500">{{this.performedByName}}</td>
+          </tr>
+        {{else}}
+          <tr><td colspan="7" class="py-10 text-center text-sm text-stone-500">No movements in this period.</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{{> app-foot}}

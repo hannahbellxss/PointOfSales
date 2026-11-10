@@ -1,0 +1,69 @@
+{{> app-head title="Orders" active="orders" subtitle="Dine-in and take-out order queue"}}
+
+<section class="card p-4">
+  <form method="GET" action="/pos/orders" class="grid gap-3 md:grid-cols-[minmax(0,1fr)_160px_150px_160px_auto]">
+    <input type="search" name="q" value="{{filters.q}}" class="input" placeholder="Search order number…" />
+    <select name="status" class="select">
+      <option value="">All status</option>
+      <option value="Pending" {{selected "Pending" filters.status}}>Pending</option>
+      <option value="Preparing" {{selected "Preparing" filters.status}}>Preparing</option>
+      <option value="Ready" {{selected "Ready" filters.status}}>Ready</option>
+      <option value="Completed" {{selected "Completed" filters.status}}>Completed</option>
+      <option value="Cancelled" {{selected "Cancelled" filters.status}}>Cancelled</option>
+    </select>
+    <select name="type" class="select">
+      <option value="">All types</option>
+      <option value="Dine-In" {{selected "Dine-In" filters.type}}>Dine-In</option>
+      <option value="Take-Out" {{selected "Take-Out" filters.type}}>Take-Out</option>
+    </select>
+    <input type="date" name="date" value="{{filters.date}}" class="input" />
+    <div class="flex gap-2">
+      <button type="submit" class="btn btn-dark">Filter</button>
+      <a href="/pos/orders" class="btn btn-light">Reset</a>
+    </div>
+  </form>
+</section>
+
+<section class="grid grid-cols-2 gap-3 lg:grid-cols-5">
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Pending</p><p class="stat-value mt-1 text-xl">{{int counts.Pending}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Preparing</p><p class="stat-value mt-1 text-xl">{{int counts.Preparing}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Ready</p><p class="stat-value mt-1 text-xl">{{int counts.Ready}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Completed</p><p class="stat-value mt-1 text-xl">{{int counts.Completed}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Cancelled</p><p class="stat-value mt-1 text-xl">{{int counts.Cancelled}}</p></div>
+</section>
+
+<section class="card overflow-hidden">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Order</th><th>Type</th><th>Table</th><th>Cashier</th><th>Subtotal</th><th>Total</th><th>Status</th><th>Created</th><th class="text-right">Actions</th></tr></thead>
+      <tbody>
+        {{#each orders}}
+          <tr>
+            <td class="font-bold text-charcoal">{{this.orderNumber}}</td>
+            <td>{{this.orderType}}</td>
+            <td class="text-stone-500">{{#if this.table}}{{this.table.name}}{{else}}—{{/if}}</td>
+            <td class="text-stone-500">{{this.cashierName}}</td>
+            <td class="text-stone-600">{{money this.subtotal}}</td>
+            <td class="font-bold">{{money this.totalAmount}}</td>
+            <td><span class="badge {{statusBadge this.status}}">{{this.status}}</span></td>
+            <td class="whitespace-nowrap text-stone-500">{{datetime this.createdAt}}</td>
+            <td class="text-right">
+              <a href="/pos/orders/{{this.id}}" class="btn btn-light px-2.5 py-1 text-[11px]">Open</a>
+              {{#if (eq this.status "Pending")}}
+                <a href="/pos/checkout/{{this.id}}" class="btn btn-primary px-2.5 py-1 text-[11px]">Checkout</a>
+              {{/if}}
+            </td>
+          </tr>
+        {{else}}
+          <tr><td colspan="9" class="py-12 text-center">
+            <p class="text-3xl">🧾</p>
+            <p class="mt-2 text-sm font-semibold text-stone-700">No orders match this filter</p>
+            <a href="/pos/terminal" class="btn btn-primary mt-3">Create an order</a>
+          </td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{{> app-foot}}

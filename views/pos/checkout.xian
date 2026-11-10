@@ -1,0 +1,277 @@
+{{> app-head title="Checkout" active="terminal" subtitle=order.orderNumber}}
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <div class="flex items-center gap-2 text-xs font-semibold text-stone-500">
+    <a href="/pos/terminal" class="hover:text-ember">POS Terminal</a><span>/</span><span class="text-stone-700">Checkout · {{order.orderNumber}}</span>
+  </div>
+  <a href="/pos/terminal" class="btn btn-light">← Back to terminal</a>
+</div>
+
+<form id="checkout-form" method="POST" action="/pos/checkout/{{order.id}}/pay" data-submit-once>
+  <section class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(340px,1fr)]">
+    <div class="space-y-6">
+      <div class="card p-5">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-stone-400">Order</p>
+            <h2 class="mt-1 text-xl font-extrabold text-charcoal">{{order.orderNumber}}</h2>
+            <p class="text-xs text-stone-500">Cashier {{order.cashierName}} · {{datetime order.createdAt}}</p>
+          </div>
+          <span class="badge {{statusBadge order.status}}">{{order.status}}</span>
+        </div>
+
+        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+          <div>
+            <label class="label" for="orderType">Order type</label>
+            <select id="orderType" name="orderType" class="select">
+              <option value="Dine-In" {{selected "Dine-In" order.orderType}}>Dine-In</option>
+              <option value="Take-Out" {{selected "Take-Out" order.orderType}}>Take-Out</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="tableId">Table (dine-in)</label>
+            <select id="tableId" name="tableId" class="select">
+              <option value="">No table</option>
+              {{#each tables}}
+                <option value="{{this.id}}" {{selected this.id ../order.tableId}} {{#if (and (eq this.status "Occupied") (ne this.id ../order.tableId))}}disabled{{/if}}>
+                  {{this.name}} · {{this.status}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+          <div>
+            <label class="label" for="discountId">Authorized discount</label>
+            <select id="discountId" name="discountId" class="select">
+              <option value="">No discount</option>
+              {{#each discounts}}
+                <option value="{{this.id}}" data-type="{{this.type}}" data-value="{{this.value}}" {{selected this.id ../selectedDiscountId}}>
+                  {{this.name}} ({{#if (eq this.type "percent")}}{{this.value}}%{{else}}{{money this.value}} off{{/if}})
+                </option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button type="submit" formaction="/pos/checkout/{{order.id}}/details" class="btn btn-light">Update order details</button>
+          <p class="self-center text-[11px] text-stone-400">Table and discount are re-validated on the server.</p>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <div class="border-b border-stone-200/80 px-5 py-4"><h2 class="text-base font-bold text-charcoal">Order Summary</h2></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Item</th><th>Unit price</th><th>Qty</th><th class="text-right">Subtotal</th></tr></thead>
+            <tbody>
+              {{#each order.items}}
+                <tr>
+                  <td class="font-semibold text-stone-800">{{this.productName}}</td>
+                  <td class="text-stone-600">{{money this.unitPrice}}</td>
+                  <td>{{int this.quantity}}</td>
+                  <td class="text-right font-bold">{{money this.subtotal}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        <div class="border-t border-stone-200/80 px-5 py-4">
+          <dl class="ml-auto max-w-sm space-y-1.5 text-sm">
+            <div class="flex justify-between text-stone-500"><dt>Subtotal</dt><dd id="sum-subtotal" class="font-semibold text-stone-700">{{money totals.subtotal}}</dd></div>
+            <div class="flex justify-between text-stone-500"><dt>Discount</dt><dd id="sum-discount" class="font-semibold text-emerald-700">−{{money totals.discountAmount}}</dd></div>
+            <div class="flex justify-between text-stone-500"><dt>Service charge ({{posSettings.serviceChargeRate}}%)</dt><dd id="sum-service" class="font-semibold text-stone-700">{{money totals.serviceCharge}}</dd></div>
+            <div class="flex justify-between text-stone-500"><dt>Tax ({{posSettings.taxRate}}%)</dt><dd id="sum-tax" class="font-semibold text-stone-700">{{money totals.taxAmount}}</dd></div>
+            <div class="flex justify-between border-t border-dashed border-stone-200 pt-2 text-base"><dt class="font-bold text-charcoal">Total due</dt><dd id="sum-total" class="font-extrabold text-ember">{{money totals.totalAmount}}</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6 xl:sticky xl:top-24">
+      <div class="card p-5">
+        <h2 class="text-base font-bold text-charcoal">Payment</h2>
+        <p class="text-xs text-stone-500">Inventory is deducted automatically once payment is confirmed.</p>
+
+        <div class="mt-4">
+          <span class="label">Payment method *</span>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="payment-option cursor-pointer rounded-xl border border-stone-200 px-3 py-2.5 text-center text-xs font-bold text-stone-600">
+              <input type="radio" name="paymentMethod" value="Cash" class="sr-only" checked /> 💵 Cash
+            </label>
+            <label class="payment-option cursor-pointer rounded-xl border border-stone-200 px-3 py-2.5 text-center text-xs font-bold text-stone-600">
+              <input type="radio" name="paymentMethod" value="GCash" class="sr-only" /> 📱 GCash
+            </label>
+            <label class="payment-option cursor-pointer rounded-xl border border-stone-200 px-3 py-2.5 text-center text-xs font-bold text-stone-600">
+              <input type="radio" name="paymentMethod" value="Maya" class="sr-only" /> 💳 Maya
+            </label>
+            <label class="payment-option cursor-pointer rounded-xl border border-stone-200 px-3 py-2.5 text-center text-xs font-bold text-stone-600">
+              <input type="radio" name="paymentMethod" value="Credit/Debit Card" class="sr-only" /> 🏦 Card
+            </label>
+          </div>
+        </div>
+
+        <div id="cash-fields" class="mt-4 space-y-3">
+          <div>
+            <label class="label" for="amountReceived">Amount received *</label>
+            <input id="amountReceived" name="amountReceived" type="number" step="0.01" min="0" class="input text-lg font-bold" placeholder="0.00" />
+            <div class="mt-2 flex flex-wrap gap-1.5">
+              <button type="button" data-cash="exact" class="btn btn-light px-2.5 py-1 text-[11px]">Exact</button>
+              <button type="button" data-cash="100" class="btn btn-light px-2.5 py-1 text-[11px]">₱100</button>
+              <button type="button" data-cash="500" class="btn btn-light px-2.5 py-1 text-[11px]">₱500</button>
+              <button type="button" data-cash="1000" class="btn btn-light px-2.5 py-1 text-[11px]">₱1000</button>
+            </div>
+          </div>
+          <div class="rounded-xl bg-stone-50 px-4 py-3">
+            <div class="flex items-center justify-between text-sm"><span class="text-stone-500">Change</span><span id="change-display" class="text-lg font-extrabold text-charcoal">{{posSettings.currency}}0.00</span></div>
+          </div>
+        </div>
+
+        <div id="electronic-fields" class="mt-4 hidden space-y-3">
+          <div>
+            <label class="label" for="referenceNumber">Payment reference number *</label>
+            <input id="referenceNumber" name="referenceNumber" maxlength="80" class="input" placeholder="GCash / Maya / card approval code" />
+          </div>
+          <label class="flex items-start gap-3 rounded-xl border border-stone-200 px-3.5 py-3 text-xs text-stone-600">
+            <input type="checkbox" name="verified" value="on" class="mt-0.5 h-4 w-4 rounded border-stone-300 text-ember focus:ring-ember" />
+            <span>I verified that the electronic payment was received for the full amount.</span>
+          </label>
+        </div>
+
+        <input type="hidden" name="checkoutToken" value="{{order.id}}-{{order.orderNumber}}" />
+        <button type="submit" class="btn btn-primary mt-5 w-full py-3 text-sm">Confirm Payment · <span id="pay-total">{{money totals.totalAmount}}</span></button>
+        <p class="mt-2 text-center text-[11px] text-stone-400">Double payment is blocked on the server.</p>
+      </div>
+
+      <div class="card p-5 text-xs leading-relaxed text-stone-500">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-stone-500">Checkout rules</h3>
+        <ul class="mt-2 space-y-1.5">
+          <li>• Totals are recalculated from database prices.</li>
+          <li>• Stock is re-checked before the sale is saved.</li>
+          <li>• The transaction, payment and stock deduction are atomic.</li>
+          <li>• A failed checkout rolls back everything.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</form>
+
+<script>
+  const CURRENCY = {{{json posSettings.currency}}};
+  const SUBTOTAL = Number("{{totals.subtotal}}") || 0;
+  const SERVICE_RATE = Number("{{posSettings.serviceChargeRate}}") || 0;
+  const TAX_RATE = Number("{{posSettings.taxRate}}") || 0;
+
+  const money = (value) =>
+    CURRENCY + Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const totalDisplay = document.getElementById("sum-total");
+  const payTotalDisplay = document.getElementById("pay-total");
+
+  function computeTotals() {
+    const discountSelect = document.getElementById("discountId");
+    const option = discountSelect.options[discountSelect.selectedIndex];
+    const type = option?.dataset?.type;
+    const value = Number(option?.dataset?.value || 0);
+
+    let discount = 0;
+    if (type === "percent") discount = (SUBTOTAL * value) / 100;
+    else if (type === "fixed") discount = Math.min(value, SUBTOTAL);
+    const taxable = Math.max(SUBTOTAL - discount, 0);
+    const service = (taxable * SERVICE_RATE) / 100;
+    const tax = ((taxable + service) * TAX_RATE) / 100;
+    const total = taxable + service + tax;
+
+    document.getElementById("sum-discount").textContent = "−" + money(discount);
+    document.getElementById("sum-service").textContent = money(service);
+    document.getElementById("sum-tax").textContent = money(tax);
+    totalDisplay.textContent = money(total);
+    payTotalDisplay.textContent = money(total);
+    updateChange();
+    return total;
+  }
+
+  function updateChange() {
+    const total = Number("{{totals.totalAmount}}") || 0;
+    // Recompute locally for change so the figure reacts while typing.
+    const discountSelect = document.getElementById("discountId");
+    const option = discountSelect.options[discountSelect.selectedIndex];
+    const type = option?.dataset?.type;
+    const value = Number(option?.dataset?.value || 0);
+    let discount = type === "percent" ? (SUBTOTAL * value) / 100 : type === "fixed" ? Math.min(value, SUBTOTAL) : 0;
+    const taxable = Math.max(SUBTOTAL - discount, 0);
+    const service = (taxable * SERVICE_RATE) / 100;
+    const tax = ((taxable + service) * TAX_RATE) / 100;
+    const due = taxable + service + tax;
+    const received = Number(document.getElementById("amountReceived").value || 0);
+    const change = received > due ? received - due : 0;
+    document.getElementById("change-display").textContent = money(change);
+    return due;
+  }
+
+  document.getElementById("discountId").addEventListener("change", computeTotals);
+  document.getElementById("amountReceived").addEventListener("input", updateChange);
+
+  document.querySelectorAll("[data-cash]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = document.getElementById("amountReceived");
+      if (button.dataset.cash === "exact") {
+        const raw = totalDisplay.textContent.replace(/[^0-9.]/g, "");
+        input.value = Number(raw || 0).toFixed(2);
+      } else {
+        input.value = Number(button.dataset.cash).toFixed(2);
+      }
+      updateChange();
+    });
+  });
+
+  const paymentOptions = document.querySelectorAll(".payment-option");
+  const cashFields = document.getElementById("cash-fields");
+  const electronicFields = document.getElementById("electronic-fields");
+  const amountReceived = document.getElementById("amountReceived");
+  const referenceNumber = document.getElementById("referenceNumber");
+
+  function syncPaymentMethod() {
+    const selected = document.querySelector('input[name="paymentMethod"]:checked');
+    const method = selected ? selected.value : "Cash";
+    const isCash = method === "Cash";
+
+    paymentOptions.forEach((option) => {
+      const input = option.querySelector("input");
+      const active = input && input.checked;
+      option.className = `payment-option cursor-pointer rounded-xl border px-3 py-2.5 text-center text-xs font-bold ${
+        active ? "border-ember bg-ember-50 text-ember" : "border-stone-200 text-stone-600"
+      }`;
+    });
+
+    cashFields.classList.toggle("hidden", !isCash);
+    electronicFields.classList.toggle("hidden", isCash);
+    amountReceived.required = isCash;
+    referenceNumber.required = !isCash;
+    updateChange();
+  }
+
+  paymentOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      option.querySelector("input").checked = true;
+      syncPaymentMethod();
+    });
+  });
+
+  document.getElementById("orderType").addEventListener("change", (event) => {
+    const tableSelect = document.getElementById("tableId");
+    if (event.target.value === "Take-Out") {
+      tableSelect.value = "";
+      tableSelect.disabled = true;
+    } else {
+      tableSelect.disabled = false;
+    }
+  });
+
+  const orderTypeSelect = document.getElementById("orderType");
+  if (orderTypeSelect.value === "Take-Out") document.getElementById("tableId").disabled = true;
+
+  syncPaymentMethod();
+  computeTotals();
+</script>
+
+{{> app-foot}}

@@ -1,0 +1,35 @@
+    </main>
+    <footer class="border-t border-stone-200/70 px-6 py-4 text-xs text-stone-400">
+      DJYum · POS &amp; Inventory Management System for DJ's Restaurant
+    </footer>
+  </div>
+</div>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    if (!sidebar) return;
+    sidebar.classList.toggle("-translate-x-full");
+    if (overlay) overlay.classList.toggle("hidden");
+  }
+
+  document.querySelectorAll("[data-confirm]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      const message = form.getAttribute("data-confirm");
+      if (message && !window.confirm(message)) event.preventDefault();
+    });
+  });
+
+  // Prevent double submissions (duplicate orders / payments).
+  document.querySelectorAll("form[data-submit-once]").forEach((form) => {
+    form.addEventListener("submit", () => {
+      form.querySelectorAll("button[type=submit]").forEach((button) => {
+        button.disabled = true;
+        button.classList.add("opacity-60", "cursor-not-allowed");
+      });
+    });
+  });
+</script>
+</body>
+</html>

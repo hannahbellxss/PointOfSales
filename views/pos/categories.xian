@@ -1,0 +1,96 @@
+{{> app-head title="Categories" active="categories" subtitle="Organise the menu into sellable groups"}}
+
+<section class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+  <div class="space-y-4">
+    <div class="card p-4">
+      <form method="GET" action="/pos/categories" class="flex flex-wrap gap-3">
+        <input type="search" name="q" value="{{filters.q}}" class="input flex-1" placeholder="Search categories…" />
+        <select name="status" class="select max-w-[170px]">
+          <option value="">All status</option>
+          <option value="active" {{selected "active" filters.status}}>Active</option>
+          <option value="archived" {{selected "archived" filters.status}}>Archived</option>
+        </select>
+        <button type="submit" class="btn btn-dark">Filter</button>
+        <a href="/pos/categories" class="btn btn-light">Reset</a>
+      </form>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      {{#each categories}}
+        <article class="card p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h2 class="truncate text-base font-bold text-charcoal">{{this.name}}</h2>
+              <p class="mt-0.5 line-clamp-2 text-xs text-stone-500">{{#if this.description}}{{this.description}}{{else}}No description{{/if}}</p>
+            </div>
+            {{#if (eq this.status "active")}}
+              <span class="badge bg-emerald-100 text-emerald-700">Active</span>
+            {{else}}
+              <span class="badge bg-stone-200 text-stone-600">Archived</span>
+            {{/if}}
+          </div>
+
+          <div class="mt-4 flex items-center justify-between rounded-xl bg-stone-50 px-3 py-2 text-xs">
+            <span class="font-semibold text-stone-500">Products</span>
+            <span class="font-bold text-stone-800">{{int this.productCount}}</span>
+          </div>
+
+          <details class="mt-3">
+            <summary class="cursor-pointer text-xs font-semibold text-ember hover:underline">Edit category</summary>
+            <form method="POST" action="/pos/categories/{{this.id}}" class="mt-3 space-y-2">
+              <div>
+                <label class="label" for="cat-name-{{this.id}}">Name</label>
+                <input id="cat-name-{{this.id}}" name="name" value="{{this.name}}" required maxlength="120" class="input" />
+              </div>
+              <div>
+                <label class="label" for="cat-desc-{{this.id}}">Description</label>
+                <textarea id="cat-desc-{{this.id}}" name="description" rows="2" maxlength="1000" class="textarea">{{this.description}}</textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-full">Save changes</button>
+            </form>
+          </details>
+
+          <div class="mt-3 flex items-center justify-between border-t border-stone-100 pt-3">
+            <p class="text-[11px] text-stone-400">Created {{date this.createdAt}}</p>
+            {{#if (eq this.status "active")}}
+              <form method="POST" action="/pos/categories/{{this.id}}/archive" data-confirm="Archive {{this.name}}? Only possible when it has no active products.">
+                <button type="submit" class="btn btn-light px-2.5 py-1 text-[11px] text-red-600">Archive</button>
+              </form>
+            {{else}}
+              <form method="POST" action="/pos/categories/{{this.id}}/restore">
+                <button type="submit" class="btn btn-light px-2.5 py-1 text-[11px] text-emerald-700">Restore</button>
+              </form>
+            {{/if}}
+          </div>
+        </article>
+      {{else}}
+        <div class="card p-10 text-center md:col-span-2">
+          <p class="text-3xl">🏷️</p>
+          <p class="mt-2 text-sm font-semibold text-stone-700">No categories yet</p>
+          <p class="text-xs text-stone-500">Create a category to start adding products.</p>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <aside class="card h-fit p-5">
+    <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500">Add Category</h2>
+    <form method="POST" action="/pos/categories" class="mt-4 space-y-3">
+      <div>
+        <label class="label" for="name">Category name *</label>
+        <input id="name" name="name" required minlength="2" maxlength="120" class="input" placeholder="e.g. Rice Meals" />
+      </div>
+      <div>
+        <label class="label" for="description">Description</label>
+        <textarea id="description" name="description" rows="3" maxlength="1000" class="textarea" placeholder="Optional notes"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary w-full">Create Category</button>
+    </form>
+
+    <div class="mt-5 rounded-xl bg-stone-50 p-3 text-[11px] leading-relaxed text-stone-500">
+      Categories can only be archived after their active products are archived or moved. Archived categories keep their history.
+    </div>
+  </aside>
+</section>
+
+{{> app-foot}}

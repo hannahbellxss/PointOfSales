@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{title}} · DJYum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: { DEFAULT: "#1F1B16", 800: "#2A241D", 700: "#3A3229" },
+            cream: "#FAF6EF",
+            ember: { DEFAULT: "#F97316", 600: "#EA580C", 50: "#FFF3E6" }
+          },
+          fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"] }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    .card { background: #fff; border: 1px solid rgba(214, 211, 209, .7); border-radius: 1rem; box-shadow: 0 1px 2px rgba(28, 25, 23, .04); }
+    .nav-link { display: flex; align-items: center; gap: .7rem; padding: .58rem .75rem; border-radius: .7rem; color: #d6d3d1; font-weight: 500; transition: background .15s, color .15s; }
+    .nav-link:hover { background: rgba(255, 255, 255, .07); color: #fff; }
+    .nav-link.active { background: #F97316; color: #fff; box-shadow: 0 10px 20px -12px rgba(249, 115, 22, .95); }
+    .nav-section { margin: 1.1rem .75rem .35rem; font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: #78716c; font-weight: 700; }
+    .nav-icon { width: 1.15rem; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .stat-value { font-size: 1.6rem; line-height: 1.9rem; font-weight: 800; color: #1F1B16; letter-spacing: -.02em; }
+    .input, .select, .textarea { width: 100%; border: 1px solid #d6d3d1; border-radius: .65rem; padding: .55rem .75rem; font-size: .875rem; background: #fff; color: #292524; }
+    .input:focus, .select:focus, .textarea:focus { outline: none; border-color: #F97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, .16); }
+    .label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #78716c; margin-bottom: .35rem; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; border-radius: .7rem; padding: .55rem .95rem; font-size: .82rem; font-weight: 600; transition: all .15s; white-space: nowrap; }
+    .btn-primary { background: #F97316; color: #fff; }
+    .btn-primary:hover { background: #EA580C; }
+    .btn-dark { background: #1F1B16; color: #fff; }
+    .btn-dark:hover { background: #3A3229; }
+    .btn-light { background: #fff; color: #44403c; border: 1px solid #d6d3d1; }
+    .btn-light:hover { background: #FAF6EF; }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .badge { display: inline-flex; align-items: center; gap: .25rem; border-radius: 999px; padding: .18rem .6rem; font-size: .7rem; font-weight: 700; --tw-ring-offset-shadow: 0 0 #0000; --tw-ring-shadow: 0 0 0 1px var(--ring, transparent); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow); }
+    .table-wrap { overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .83rem; }
+    .data-table thead th { text-align: left; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: #a8a29e; font-weight: 700; padding: .7rem 1rem; background: #FBF8F3; border-bottom: 1px solid rgba(214, 211, 209, .8); white-space: nowrap; }
+    .data-table tbody td { padding: .75rem 1rem; border-bottom: 1px solid rgba(231, 229, 228, .8); vertical-align: middle; }
+    .data-table tbody tr:hover { background: #FDFBF7; }
+    .data-table tbody tr:last-child td { border-bottom: 0; }
+    @media print { .no-print { display: none !important; } body { background: #fff; } }
+  </style>
+</head>
+<body class="bg-cream text-stone-800 antialiased">
+<div class="min-h-screen lg:flex">
+  {{> sidebar active=active}}
+  <div id="sidebar-overlay" class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden" onclick="toggleSidebar()"></div>
+
+  <div class="flex min-w-0 flex-1 flex-col">
+    {{> topbar title=title subtitle=subtitle}}
+    <main class="flex-1 space-y-6 p-4 sm:p-6 lg:p-8">
+      {{> flash}}

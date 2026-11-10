@@ -1,0 +1,117 @@
+{{> app-head title="Products" active="products" subtitle="Menu items, pricing and availability"}}
+
+<section class="flex flex-wrap items-center justify-between gap-3">
+  <div class="flex flex-wrap gap-2 text-xs font-semibold">
+    <span class="rounded-full bg-white px-3 py-1.5 text-stone-600 ring-1 ring-stone-200">Active: {{int totals.total}}</span>
+    <span class="rounded-full bg-white px-3 py-1.5 text-stone-600 ring-1 ring-stone-200">Archived: {{int totals.archived}}</span>
+    <span class="rounded-full bg-amber-50 px-3 py-1.5 text-amber-700 ring-1 ring-amber-200">Low stock: {{int totals.low}}</span>
+    <span class="rounded-full bg-red-50 px-3 py-1.5 text-red-700 ring-1 ring-red-200">Out of stock: {{int totals.out}}</span>
+  </div>
+  <a href="/pos/products/new" class="btn btn-primary">+ Add Product</a>
+</section>
+
+<section class="card p-4">
+  <form method="GET" action="/pos/products" class="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_160px_150px_auto]">
+    <input type="search" name="q" value="{{filters.q}}" class="input" placeholder="Search product name or description…" />
+    <select name="category" class="select">
+      <option value="">All categories</option>
+      {{#each categories}}
+        <option value="{{this.id}}" {{selected this.id ../filters.category}}>{{this.name}}</option>
+      {{/each}}
+    </select>
+    <select name="stock" class="select">
+      <option value="">All stock</option>
+      <option value="available" {{selected "available" filters.stock}}>In stock</option>
+      <option value="low" {{selected "low" filters.stock}}>Low stock</option>
+      <option value="out" {{selected "out" filters.stock}}>Out of stock</option>
+    </select>
+    <select name="status" class="select">
+      <option value="">All status</option>
+      <option value="active" {{selected "active" filters.status}}>Active</option>
+      <option value="archived" {{selected "archived" filters.status}}>Archived</option>
+    </select>
+    <div class="flex gap-2">
+      <button type="submit" class="btn btn-dark">Filter</button>
+      <a href="/pos/products" class="btn btn-light">Reset</a>
+    </div>
+  </form>
+</section>
+
+<section class="card overflow-hidden">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th><th>Category</th><th>Type</th><th>Price</th><th>Stock</th><th>Availability</th><th>Status</th><th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each products}}
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-stone-100">
+                  {{#if this.image}}
+                    <img src="{{this.image}}" alt="{{this.name}}" class="h-full w-full object-cover" />
+                  {{else}}
+                    <div class="flex h-full w-full items-center justify-center text-lg">🍽️</div>
+                  {{/if}}
+                </div>
+                <div class="min-w-0">
+                  <p class="font-bold text-charcoal">{{this.name}}</p>
+                  <p class="max-w-[240px] truncate text-[11px] text-stone-400">{{#if this.description}}{{this.description}}{{else}}No description{{/if}}</p>
+                </div>
+              </div>
+            </td>
+            <td class="text-stone-600">{{this.category.name}}</td>
+            <td><span class="badge bg-stone-100 text-stone-600">{{this.type}}</span></td>
+            <td class="font-bold">{{money this.price}}</td>
+            <td>
+              <p class="font-semibold text-stone-800">{{int this.currentStock}} {{this.inventory.unit}}</p>
+              <p class="text-[11px] text-stone-400">min {{int this.minStock}}</p>
+            </td>
+            <td>
+              {{#if this.availability}}
+                <span class="badge bg-emerald-100 text-emerald-700">Available</span>
+              {{else}}
+                <span class="badge bg-stone-100 text-stone-500">Unavailable</span>
+              {{/if}}
+            </td>
+            <td>
+              {{#if (eq this.status "active")}}
+                <span class="badge bg-sky-100 text-sky-700">Active</span>
+              {{else}}
+                <span class="badge bg-stone-200 text-stone-600">Archived</span>
+              {{/if}}
+            </td>
+            <td>
+              <div class="flex justify-end gap-1.5">
+                <a href="/pos/products/{{this.id}}/edit" class="btn btn-light px-2.5 py-1 text-[11px]">Edit</a>
+                {{#if (eq this.status "active")}}
+                  <form method="POST" action="/pos/products/{{this.id}}/archive" data-confirm="Archive {{this.name}}? It will be removed from the POS but its sales history stays intact.">
+                    <button type="submit" class="btn btn-light px-2.5 py-1 text-[11px] text-red-600">Archive</button>
+                  </form>
+                {{else}}
+                  <form method="POST" action="/pos/products/{{this.id}}/restore">
+                    <button type="submit" class="btn btn-light px-2.5 py-1 text-[11px] text-emerald-700">Restore</button>
+                  </form>
+                {{/if}}
+              </div>
+            </td>
+          </tr>
+        {{else}}
+          <tr>
+            <td colspan="8" class="py-12 text-center">
+              <p class="text-2xl">🍔</p>
+              <p class="mt-2 text-sm font-semibold text-stone-700">No products found</p>
+              <p class="text-xs text-stone-500">Adjust the filters or add your first menu item.</p>
+              <a href="/pos/products/new" class="btn btn-primary mt-3">Add Product</a>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{{> app-foot}}
