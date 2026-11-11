@@ -3,74 +3,74 @@
 <section class="grid grid-cols-2 gap-4 xl:grid-cols-4">
   <div class="card p-5">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Total Sales Today</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-ember-50 text-ember">₱</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Total Sales Today</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-ember/10 text-ember">₱</span>
     </div>
     <p class="stat-value mt-3">{{money summary.salesToday}}</p>
-    <p class="mt-1 text-xs text-stone-500">{{summary.transactionsToday}} completed transaction(s)</p>
+    <p class="mt-1 text-xs text-zinc-400">{{summary.transactionsToday}} completed transaction(s)</p>
   </div>
 
   <div class="card p-5">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Total Transactions</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">🧾</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Total Transactions</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06]">🧾</span>
     </div>
     <p class="stat-value mt-3">{{int summary.transactionsToday}}</p>
-    <p class="mt-1 text-xs text-stone-500">{{summary.cancelledToday}} voided/cancelled today</p>
+    <p class="mt-1 text-xs text-zinc-400">{{summary.cancelledToday}} voided/cancelled today</p>
   </div>
 
   <div class="card p-5">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Orders Today</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">🛎️</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Orders Today</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06]">🛎️</span>
     </div>
     <p class="stat-value mt-3">{{int summary.ordersToday}}</p>
-    <p class="mt-1 text-xs text-stone-500">{{summary.totalOrders}} order(s) all time</p>
+    <p class="mt-1 text-xs text-zinc-400">{{summary.totalOrders}} order(s) all time</p>
   </div>
 
   <div class="card p-5">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Total Products</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">🍔</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Total Products</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06]">🍔</span>
     </div>
     <p class="stat-value mt-3">{{int summary.totalProducts}}</p>
-    <p class="mt-1 text-xs text-stone-500">Active menu items</p>
+    <p class="mt-1 text-xs text-zinc-400">Active menu items</p>
   </div>
 
   <div class="card p-5">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Available Stock</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50">📦</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Available Stock</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10">📦</span>
     </div>
     <p class="stat-value mt-3">{{int summary.totalStock}}</p>
-    <p class="mt-1 text-xs text-stone-500">Units across all products</p>
+    <p class="mt-1 text-xs text-zinc-400">Units across all products</p>
   </div>
 
   <a href="/pos/inventory/low-stock" class="card p-5 transition hover:-translate-y-0.5 hover:shadow-md">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Low Stock Products</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50">⚠️</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Low Stock Products</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10">⚠️</span>
     </div>
-    <p class="stat-value mt-3 {{#if summary.lowStock}}text-amber-600{{/if}}">{{int summary.lowStock}}</p>
-    <p class="mt-1 text-xs text-stone-500">At or below minimum level</p>
+    <p class="stat-value mt-3 {{#if summary.lowStock}}text-amber-400{{/if}}">{{int summary.lowStock}}</p>
+    <p class="mt-1 text-xs text-zinc-400">At or below minimum level</p>
   </a>
 
   <a href="/pos/inventory/out-of-stock" class="card p-5 transition hover:-translate-y-0.5 hover:shadow-md">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Out of Stock</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50">⛔</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Out of Stock</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-500/10">⛔</span>
     </div>
-    <p class="stat-value mt-3 {{#if summary.outOfStock}}text-red-600{{/if}}">{{int summary.outOfStock}}</p>
-    <p class="mt-1 text-xs text-stone-500">Cannot be sold until restocked</p>
+    <p class="stat-value mt-3 {{#if summary.outOfStock}}text-red-400{{/if}}">{{int summary.outOfStock}}</p>
+    <p class="mt-1 text-xs text-zinc-400">Cannot be sold until restocked</p>
   </a>
 
   <a href="/pos/tables" class="card p-5 transition hover:-translate-y-0.5 hover:shadow-md">
     <div class="flex items-start justify-between">
-      <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Tables</p>
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">🪑</span>
+      <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Tables</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06]">🪑</span>
     </div>
-    <p class="stat-value mt-3">{{int summary.tablesAvailable}}<span class="text-base font-semibold text-stone-400">/{{int summary.tablesTotal}}</span></p>
-    <p class="mt-1 text-xs text-stone-500">{{summary.tablesOccupied}} occupied</p>
+    <p class="stat-value mt-3">{{int summary.tablesAvailable}}<span class="text-base font-semibold text-zinc-500">/{{int summary.tablesTotal}}</span></p>
+    <p class="mt-1 text-xs text-zinc-400">{{summary.tablesOccupied}} occupied</p>
   </a>
 </section>
 
@@ -78,10 +78,10 @@
   <div class="card p-5 xl:col-span-2">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h2 class="text-base font-bold text-charcoal">Sales Trend</h2>
-        <p class="text-xs text-stone-500">Completed transactions only</p>
+        <h2 class="text-base font-bold text-white">Sales Trend</h2>
+        <p class="text-xs text-zinc-400">Completed transactions only</p>
       </div>
-      <div class="flex rounded-xl border border-stone-200 bg-stone-50 p-1 text-xs font-semibold">
+      <div class="flex rounded-xl border border-white/10 bg-white/[0.04] p-1 text-xs font-semibold">
         <button type="button" data-range="daily" class="chart-tab rounded-lg px-3 py-1.5">Daily</button>
         <button type="button" data-range="weekly" class="chart-tab rounded-lg px-3 py-1.5">Weekly</button>
         <button type="button" data-range="monthly" class="chart-tab rounded-lg px-3 py-1.5">Monthly</button>
@@ -92,21 +92,21 @@
 
   <div class="card p-5">
     <div class="flex items-center justify-between">
-      <h2 class="text-base font-bold text-charcoal">Best Sellers</h2>
-      <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">30 days</span>
+      <h2 class="text-base font-bold text-white">Best Sellers</h2>
+      <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">30 days</span>
     </div>
     <div class="mt-4 space-y-3">
       {{#each bestSellers}}
         <div class="flex items-center gap-3">
-          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-ember-50 text-xs font-bold text-ember">{{@index}}</span>
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-ember/10 text-xs font-bold text-ember">{{@index}}</span>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-semibold text-stone-800">{{this.name}}</p>
-            <p class="text-xs text-stone-500">{{int this.qty}} sold</p>
+            <p class="truncate text-sm font-semibold text-zinc-100">{{this.name}}</p>
+            <p class="text-xs text-zinc-400">{{int this.qty}} sold</p>
           </div>
-          <span class="text-sm font-bold text-stone-700">{{money this.revenue}}</span>
+          <span class="text-sm font-bold text-zinc-200">{{money this.revenue}}</span>
         </div>
       {{else}}
-        <p class="rounded-xl bg-stone-50 px-4 py-8 text-center text-sm text-stone-500">No completed sales yet.</p>
+        <p class="rounded-xl bg-white/[0.04] px-4 py-8 text-center text-sm text-zinc-400">No completed sales yet.</p>
       {{/each}}
     </div>
 
@@ -123,8 +123,8 @@
 
 <section class="grid gap-6 xl:grid-cols-2">
   <div class="card overflow-hidden">
-    <div class="flex items-center justify-between border-b border-stone-200/80 px-5 py-4">
-      <h2 class="text-base font-bold text-charcoal">Recent Transactions</h2>
+    <div class="flex items-center justify-between border-b border-white/10 px-5 py-4">
+      <h2 class="text-base font-bold text-white">Recent Transactions</h2>
       {{#can "transactions"}}<a href="/pos/transactions" class="text-xs font-semibold text-ember hover:underline">View all</a>{{/can}}
     </div>
     <div class="table-wrap">
@@ -135,14 +135,14 @@
         <tbody>
           {{#each recentTransactions}}
             <tr>
-              <td class="font-semibold text-stone-800">{{this.transactionNumber}}</td>
+              <td class="font-semibold text-zinc-100">{{this.transactionNumber}}</td>
               <td>{{this.order.orderType}}</td>
-              <td class="text-stone-500">{{this.cashierName}}</td>
+              <td class="text-zinc-400">{{this.cashierName}}</td>
               <td class="font-bold">{{money this.totalAmount}}</td>
-              <td class="text-stone-500">{{time this.createdAt}}</td>
+              <td class="text-zinc-400">{{time this.createdAt}}</td>
             </tr>
           {{else}}
-            <tr><td colspan="5" class="py-8 text-center text-stone-500">No transactions recorded yet.</td></tr>
+            <tr><td colspan="5" class="py-8 text-center text-zinc-400">No transactions recorded yet.</td></tr>
           {{/each}}
         </tbody>
       </table>
@@ -150,8 +150,8 @@
   </div>
 
   <div class="card overflow-hidden">
-    <div class="flex items-center justify-between border-b border-stone-200/80 px-5 py-4">
-      <h2 class="text-base font-bold text-charcoal">Recent Inventory Movements</h2>
+    <div class="flex items-center justify-between border-b border-white/10 px-5 py-4">
+      <h2 class="text-base font-bold text-white">Recent Inventory Movements</h2>
       {{#can "inventory"}}<a href="/pos/inventory/movements" class="text-xs font-semibold text-ember hover:underline">View all</a>{{/can}}
     </div>
     <div class="table-wrap">
@@ -162,14 +162,14 @@
         <tbody>
           {{#each recentMovements}}
             <tr>
-              <td class="font-semibold text-stone-800">{{this.productName}}</td>
-              <td><span class="badge bg-stone-100 text-stone-600">{{this.type}}</span></td>
+              <td class="font-semibold text-zinc-100">{{this.productName}}</td>
+              <td><span class="badge bg-white/[0.06] text-zinc-300">{{this.type}}</span></td>
               <td class="font-semibold">{{int this.quantity}}</td>
-              <td class="text-stone-500">{{int this.previousStock}} → {{int this.newStock}}</td>
-              <td class="text-stone-500">{{datetime this.createdAt}}</td>
+              <td class="text-zinc-400">{{int this.previousStock}} → {{int this.newStock}}</td>
+              <td class="text-zinc-400">{{datetime this.createdAt}}</td>
             </tr>
           {{else}}
-            <tr><td colspan="5" class="py-8 text-center text-stone-500">No stock movements yet.</td></tr>
+            <tr><td colspan="5" class="py-8 text-center text-zinc-400">No stock movements yet.</td></tr>
           {{/each}}
         </tbody>
       </table>
@@ -195,8 +195,8 @@
         datasets: [{
           label: "Sales",
           data: data.map((point) => point.total),
-          backgroundColor: "#F97316",
-          hoverBackgroundColor: "#EA580C",
+          backgroundColor: "#FFC400",
+          hoverBackgroundColor: "#E5AF00",
           borderRadius: 8,
           maxBarThickness: 42
         }]
@@ -213,11 +213,11 @@
           }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { color: "#a8a29e", font: { size: 11 } } },
+          x: { grid: { display: false }, ticks: { color: "#71717a", font: { size: 11 } } },
           y: {
             beginAtZero: true,
-            grid: { color: "rgba(231,229,228,.7)" },
-            ticks: { color: "#a8a29e", font: { size: 11 }, callback: (value) => `₱${value}` }
+            grid: { color: "rgba(255,255,255,.08)" },
+            ticks: { color: "#71717a", font: { size: 11 }, callback: (value) => `₱${value}` }
           }
         }
       }
@@ -227,7 +227,7 @@
   function setActiveTab(active) {
     document.querySelectorAll(".chart-tab").forEach((tab) => {
       const isActive = tab.dataset.range === active;
-      tab.className = `chart-tab rounded-lg px-3 py-1.5 ${isActive ? "bg-white text-charcoal shadow-sm" : "text-stone-500"}`;
+      tab.className = `chart-tab rounded-lg px-3 py-1.5 ${isActive ? "bg-ember text-black shadow-sm" : "text-zinc-400"}`;
     });
   }
 

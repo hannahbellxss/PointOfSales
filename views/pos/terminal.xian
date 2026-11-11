@@ -5,7 +5,7 @@
     <div class="card space-y-3 p-4">
       <div class="flex flex-wrap items-center gap-3">
         <div class="relative min-w-[200px] flex-1">
-          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">🔍</span>
+          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">🔍</span>
           <input id="product-search" type="search" class="input pl-9" placeholder="Search the menu…" autocomplete="off" />
         </div>
         <select id="category-filter" class="select max-w-[220px]">
@@ -14,12 +14,12 @@
             <option value="{{this.id}}">{{this.name}}</option>
           {{/each}}
         </select>
-        <span id="product-count" class="rounded-lg bg-stone-100 px-3 py-1.5 text-xs font-semibold text-stone-600">{{catalog.length}} items</span>
+        <span id="product-count" class="rounded-lg bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-zinc-300">{{catalog.length}} items</span>
       </div>
       <div class="flex flex-wrap gap-2" id="category-chips">
-        <button type="button" data-category="" class="category-chip rounded-full bg-charcoal px-3.5 py-1.5 text-xs font-semibold text-white">All</button>
+        <button type="button" data-category="" class="category-chip rounded-full bg-ember px-3.5 py-1.5 text-xs font-semibold text-black">All</button>
         {{#each categories}}
-          <button type="button" data-category="{{this.id}}" class="category-chip rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-stone-600">{{this.name}}</button>
+          <button type="button" data-category="{{this.id}}" class="category-chip rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-zinc-300">{{this.name}}</button>
         {{/each}}
       </div>
     </div>
@@ -27,35 +27,35 @@
     <div id="product-grid" class="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3"></div>
     <div id="empty-products" class="card hidden p-10 text-center">
       <p class="text-3xl">🍽️</p>
-      <p class="mt-2 text-sm font-semibold text-stone-700">No products match this view</p>
-      <p class="text-xs text-stone-500">Try a different search or category.</p>
+      <p class="mt-2 text-sm font-semibold text-zinc-200">No products match this view</p>
+      <p class="text-xs text-zinc-400">Try a different search or category.</p>
     </div>
   </section>
 
   <aside class="card overflow-hidden xl:sticky xl:top-24">
-    <div class="border-b border-stone-200/80 px-5 py-4">
+    <div class="border-b border-white/10 px-5 py-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-charcoal">Current Order</h2>
-        <span id="cart-count" class="rounded-full bg-ember-50 px-2.5 py-1 text-xs font-bold text-ember">0 items</span>
+        <h2 class="text-base font-bold text-white">Current Order</h2>
+        <span id="cart-count" class="rounded-full bg-ember/10 px-2.5 py-1 text-xs font-bold text-ember">0 items</span>
       </div>
-      <div class="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-stone-100 p-1">
-        <button type="button" data-order-type="Dine-In" class="order-type rounded-lg py-1.5 text-xs font-bold text-white">Dine-In</button>
-        <button type="button" data-order-type="Take-Out" class="order-type rounded-lg py-1.5 text-xs font-bold text-stone-500">Take-Out</button>
+      <div class="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-white/[0.06] p-1">
+        <button type="button" data-order-type="Dine-In" class="order-type rounded-lg py-1.5 text-xs font-bold text-zinc-400">Dine-In</button>
+        <button type="button" data-order-type="Take-Out" class="order-type rounded-lg py-1.5 text-xs font-bold text-zinc-400">Take-Out</button>
       </div>
     </div>
 
     <div id="cart-items" class="max-h-[42vh] overflow-y-auto px-3 py-2"></div>
 
-    <div class="border-t border-stone-200/80 px-5 py-4">
+    <div class="border-t border-white/10 px-5 py-4">
       <dl class="space-y-1.5 text-sm">
-        <div class="flex justify-between text-stone-500"><dt>Subtotal</dt><dd id="cart-subtotal" class="font-semibold text-stone-700">{{posSettings.currency}}0.00</dd></div>
+        <div class="flex justify-between text-zinc-400"><dt>Subtotal</dt><dd id="cart-subtotal" class="font-semibold text-zinc-200">{{posSettings.currency}}0.00</dd></div>
         {{#if posSettings.serviceChargeRate}}
-          <div class="flex justify-between text-stone-500"><dt>Service charge ({{posSettings.serviceChargeRate}}%)</dt><dd id="cart-service" class="font-semibold text-stone-700">{{posSettings.currency}}0.00</dd></div>
+          <div class="flex justify-between text-zinc-400"><dt>Service charge ({{posSettings.serviceChargeRate}}%)</dt><dd id="cart-service" class="font-semibold text-zinc-200">{{posSettings.currency}}0.00</dd></div>
         {{/if}}
         {{#if posSettings.taxRate}}
-          <div class="flex justify-between text-stone-500"><dt>Tax ({{posSettings.taxRate}}%)</dt><dd id="cart-tax" class="font-semibold text-stone-700">{{posSettings.currency}}0.00</dd></div>
+          <div class="flex justify-between text-zinc-400"><dt>Tax ({{posSettings.taxRate}}%)</dt><dd id="cart-tax" class="font-semibold text-zinc-200">{{posSettings.currency}}0.00</dd></div>
         {{/if}}
-        <div class="flex justify-between border-t border-dashed border-stone-200 pt-2 text-base"><dt class="font-bold text-charcoal">Total</dt><dd id="cart-total" class="font-extrabold text-ember">{{posSettings.currency}}0.00</dd></div>
+        <div class="flex justify-between border-t border-dashed border-white/10 pt-2 text-base"><dt class="font-bold text-white">Total</dt><dd id="cart-total" class="font-extrabold text-ember">{{posSettings.currency}}0.00</dd></div>
       </dl>
 
       <label class="label mt-4" for="order-note">Order note (optional)</label>
@@ -69,7 +69,7 @@
           Proceed to Checkout
         </button>
       </form>
-      <button type="button" id="clear-cart" class="mt-2 w-full rounded-lg py-1.5 text-xs font-semibold text-stone-500 hover:bg-stone-50 hover:text-red-600">
+      <button type="button" id="clear-cart" class="mt-2 w-full rounded-lg py-1.5 text-xs font-semibold text-zinc-400 hover:bg-white/[0.04] hover:text-red-400">
         Clear cart
       </button>
     </div>
@@ -123,21 +123,21 @@
       const soldOut = product.stock <= 0;
       return `
         <button type="button" data-product="${product.id}" ${soldOut ? "disabled" : ""}
-          class="group relative flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white text-left transition ${soldOut ? "opacity-60" : "hover:-translate-y-0.5 hover:border-ember/50 hover:shadow-md"}">
-          <div class="relative h-28 w-full bg-stone-100">
+          class="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] text-left transition ${soldOut ? "opacity-60" : "hover:-translate-y-0.5 hover:border-ember/50 hover:shadow-md"}">
+          <div class="relative h-28 w-full bg-white/[0.06]">
             ${product.image
               ? `<img src="${product.image}" alt="${product.name}" class="h-full w-full object-cover" />`
               : `<div class="flex h-full w-full items-center justify-center text-3xl">🍽️</div>`}
-            <span class="absolute right-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${soldOut ? "bg-red-100 text-red-700" : available <= 5 ? "bg-amber-100 text-amber-800" : "bg-white/90 text-stone-700"}">
+            <span class="absolute right-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${soldOut ? "bg-red-500/15 text-red-300" : available <= 5 ? "bg-amber-500/15 text-amber-300" : "bg-black/70 text-zinc-200"}">
               ${soldOut ? "Out of stock" : `${available} ${product.unit}`}
             </span>
           </div>
           <div class="flex flex-1 flex-col p-3">
-            <p class="line-clamp-2 text-sm font-bold leading-snug text-charcoal">${product.name}</p>
-            <p class="mt-0.5 text-[11px] text-stone-400">${product.category}</p>
+            <p class="line-clamp-2 text-sm font-bold leading-snug text-white">${product.name}</p>
+            <p class="mt-0.5 text-[11px] text-zinc-500">${product.category}</p>
             <div class="mt-2 flex items-center justify-between">
               <span class="text-sm font-extrabold text-ember">${money(product.price)}</span>
-              ${inCart ? `<span class="rounded-full bg-charcoal px-2 py-0.5 text-[10px] font-bold text-white">${inCart} in cart</span>` : ""}
+              ${inCart ? `<span class="rounded-full bg-ember px-2 py-0.5 text-[10px] font-bold text-black">${inCart} in cart</span>` : ""}
             </div>
           </div>
         </button>`;
@@ -152,25 +152,25 @@
       container.innerHTML = `
         <div class="px-2 py-10 text-center">
           <p class="text-3xl">🛒</p>
-          <p class="mt-2 text-sm font-semibold text-stone-700">Cart is empty</p>
-          <p class="text-xs text-stone-500">Tap a product to start the order.</p>
+          <p class="mt-2 text-sm font-semibold text-zinc-200">Cart is empty</p>
+          <p class="text-xs text-zinc-400">Tap a product to start the order.</p>
         </div>`;
     } else {
       container.innerHTML = lines.map(([id, quantity]) => {
         const product = productById.get(Number(id));
         if (!product) return "";
         return `
-          <div class="flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-stone-50">
+          <div class="flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-white/[0.04]">
             <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-semibold text-stone-800">${product.name}</p>
-              <p class="text-[11px] text-stone-500">${money(product.price)} × ${quantity} = <span class="font-semibold text-stone-700">${money(product.price * quantity)}</span></p>
+              <p class="truncate text-sm font-semibold text-zinc-100">${product.name}</p>
+              <p class="text-[11px] text-zinc-400">${money(product.price)} × ${quantity} = <span class="font-semibold text-zinc-200">${money(product.price * quantity)}</span></p>
             </div>
-            <div class="flex items-center gap-1 rounded-lg border border-stone-200 p-0.5">
-              <button type="button" data-decrease="${id}" class="h-6 w-6 rounded text-sm font-bold text-stone-500 hover:bg-stone-100">−</button>
+            <div class="flex items-center gap-1 rounded-lg border border-white/10 p-0.5">
+              <button type="button" data-decrease="${id}" class="h-6 w-6 rounded text-sm font-bold text-zinc-400 hover:bg-white/[0.06]">−</button>
               <span class="w-6 text-center text-xs font-bold">${quantity}</span>
-              <button type="button" data-increase="${id}" class="h-6 w-6 rounded text-sm font-bold text-stone-500 hover:bg-stone-100" ${quantity >= product.stock ? "disabled" : ""}>+</button>
+              <button type="button" data-increase="${id}" class="h-6 w-6 rounded text-sm font-bold text-zinc-400 hover:bg-white/[0.06]" ${quantity >= product.stock ? "disabled" : ""}>+</button>
             </div>
-            <button type="button" data-remove="${id}" class="h-7 w-7 rounded text-xs text-stone-400 hover:bg-red-50 hover:text-red-600" title="Remove">✕</button>
+            <button type="button" data-remove="${id}" class="h-7 w-7 rounded text-xs text-zinc-500 hover:bg-red-500/10 hover:text-red-400" title="Remove">✕</button>
           </div>`;
       }).join("");
     }
@@ -246,10 +246,10 @@
   });
 
   function activateChip(chip) {
-    chip.className = "category-chip rounded-full bg-charcoal px-3.5 py-1.5 text-xs font-semibold text-white";
+    chip.className = "category-chip rounded-full bg-ember px-3.5 py-1.5 text-xs font-semibold text-black";
   }
   function deactivateChip(chip) {
-    chip.className = "category-chip rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-stone-600";
+    chip.className = "category-chip rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-zinc-300";
   }
 
   document.getElementById("category-chips").addEventListener("click", (event) => {
@@ -268,7 +268,7 @@
     document.getElementById("order-type-input").value = type;
     document.querySelectorAll(".order-type").forEach((button) => {
       const active = button.dataset.orderType === type;
-      button.className = `order-type rounded-lg py-1.5 text-xs font-bold ${active ? "bg-white text-charcoal shadow-sm" : "text-stone-500"}`;
+      button.className = `order-type rounded-lg py-1.5 text-xs font-bold ${active ? "bg-ember text-black shadow-sm" : "text-zinc-400"}`;
     });
   }
 

@@ -63,28 +63,28 @@ export const registerHelpers = (hbs) => {
   hbs.registerHelper("badge", (status) => stockBadgeClass(status));
 
   const STATUS_BADGES = {
-    Pending: "bg-amber-100 text-amber-800 ring-amber-200",
-    Preparing: "bg-sky-100 text-sky-700 ring-sky-200",
-    Ready: "bg-indigo-100 text-indigo-700 ring-indigo-200",
-    Completed: "bg-emerald-100 text-emerald-700 ring-emerald-200",
-    Cancelled: "bg-red-100 text-red-700 ring-red-200",
-    Paid: "bg-emerald-100 text-emerald-700 ring-emerald-200",
-    Refunded: "bg-amber-100 text-amber-800 ring-amber-200",
-    Failed: "bg-red-100 text-red-700 ring-red-200",
-    Voided: "bg-red-100 text-red-700 ring-red-200",
-    Available: "bg-emerald-100 text-emerald-700 ring-emerald-200",
-    Occupied: "bg-orange-100 text-orange-700 ring-orange-200",
-    Reserved: "bg-sky-100 text-sky-700 ring-sky-200",
-    "In Stock": "bg-emerald-100 text-emerald-700 ring-emerald-200",
-    "Low Stock": "bg-amber-100 text-amber-800 ring-amber-200",
-    "Out of Stock": "bg-red-100 text-red-700 ring-red-200",
-    active: "bg-emerald-100 text-emerald-700 ring-emerald-200",
-    archived: "bg-stone-200 text-stone-600 ring-stone-300",
-    inactive: "bg-stone-200 text-stone-600 ring-stone-300",
+    Pending: "bg-amber-500/15 text-amber-300 ring-amber-500/30",
+    Preparing: "bg-sky-500/15 text-sky-300 ring-sky-500/30",
+    Ready: "bg-indigo-500/15 text-indigo-300 ring-indigo-500/30",
+    Completed: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
+    Cancelled: "bg-red-500/15 text-red-300 ring-red-500/30",
+    Paid: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
+    Refunded: "bg-amber-500/15 text-amber-300 ring-amber-500/30",
+    Failed: "bg-red-500/15 text-red-300 ring-red-500/30",
+    Voided: "bg-red-500/15 text-red-300 ring-red-500/30",
+    Available: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
+    Occupied: "bg-orange-500/15 text-orange-300 ring-orange-500/30",
+    Reserved: "bg-sky-500/15 text-sky-300 ring-sky-500/30",
+    "In Stock": "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
+    "Low Stock": "bg-amber-500/15 text-amber-300 ring-amber-500/30",
+    "Out of Stock": "bg-red-500/15 text-red-300 ring-red-500/30",
+    active: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
+    archived: "bg-white/10 text-zinc-300 ring-white/15",
+    inactive: "bg-white/10 text-zinc-300 ring-white/15",
   };
   hbs.registerHelper(
     "statusBadge",
-    (status) => STATUS_BADGES[String(status)] || "bg-stone-100 text-stone-600 ring-stone-200"
+    (status) => STATUS_BADGES[String(status)] || "bg-white/10 text-zinc-300 ring-white/15"
   );
 
   hbs.registerHelper("initials", (name) =>

@@ -3,9 +3,9 @@
 <section class="grid grid-cols-2 gap-3 lg:grid-cols-5">
   {{#each summary}}
     <div class="card p-4">
-      <p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">{{@key}}</p>
+      <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{@key}}</p>
       <p class="stat-value mt-1 text-xl">{{int this.count}}</p>
-      <p class="text-[11px] text-stone-500">{{int this.units}} units</p>
+      <p class="text-[11px] text-zinc-400">{{int this.units}} units</p>
     </div>
   {{/each}}
 </section>
@@ -41,17 +41,17 @@
       <tbody>
         {{#each movements}}
           <tr>
-            <td class="whitespace-nowrap text-stone-500">{{datetime this.createdAt}}</td>
-            <td class="font-semibold text-stone-800">{{this.productName}}</td>
-            <td><span class="badge bg-stone-100 text-stone-600">{{this.type}}</span></td>
+            <td class="whitespace-nowrap text-zinc-400">{{datetime this.createdAt}}</td>
+            <td class="font-semibold text-zinc-100">{{this.productName}}</td>
+            <td><span class="badge bg-white/[0.06] text-zinc-300">{{this.type}}</span></td>
             <td class="font-bold">{{int this.quantity}}</td>
-            <td class="whitespace-nowrap text-stone-500">{{int this.previousStock}} → <span class="font-semibold text-stone-700">{{int this.newStock}}</span></td>
-            <td class="font-mono text-[11px] text-stone-500">{{this.referenceNumber}}</td>
-            <td class="max-w-[260px] truncate text-stone-500" title="{{this.reason}}">{{this.reason}}</td>
-            <td class="text-stone-500">{{this.performedByName}}</td>
+            <td class="whitespace-nowrap text-zinc-400">{{int this.previousStock}} → <span class="font-semibold text-zinc-200">{{int this.newStock}}</span></td>
+            <td class="font-mono text-[11px] text-zinc-400">{{this.referenceNumber}}</td>
+            <td class="max-w-[260px] truncate text-zinc-400" title="{{this.reason}}">{{this.reason}}</td>
+            <td class="text-zinc-400">{{this.performedByName}}</td>
           </tr>
         {{else}}
-          <tr><td colspan="8" class="py-12 text-center text-sm text-stone-500">No movements match this filter.</td></tr>
+          <tr><td colspan="8" class="py-12 text-center text-sm text-zinc-400">No movements match this filter.</td></tr>
         {{/each}}
       </tbody>
     </table>

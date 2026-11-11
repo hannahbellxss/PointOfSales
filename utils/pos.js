@@ -169,15 +169,15 @@ export const stockStatus = (currentStock, minStockLevel) => {
 export const stockBadgeClass = (status) => {
   switch (status) {
     case "Out of Stock":
-      return "bg-red-100 text-red-700 ring-red-200";
+      return "bg-red-500/15 text-red-300 ring-red-500/30";
     case "Low Stock":
-      return "bg-amber-100 text-amber-800 ring-amber-200";
+      return "bg-amber-500/15 text-amber-300 ring-amber-500/30";
     case "Occupied":
-      return "bg-orange-100 text-orange-700 ring-orange-200";
+      return "bg-orange-500/15 text-orange-300 ring-orange-500/30";
     case "Reserved":
-      return "bg-sky-100 text-sky-700 ring-sky-200";
+      return "bg-sky-500/15 text-sky-300 ring-sky-500/30";
     default:
-      return "bg-emerald-100 text-emerald-700 ring-emerald-200";
+      return "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30";
   }
 };
 

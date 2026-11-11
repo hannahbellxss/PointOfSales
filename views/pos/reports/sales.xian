@@ -23,23 +23,23 @@
     <button type="submit" class="btn btn-dark">Generate</button>
     <a href="/pos/reports/export?type=sales&period={{range.period}}&from={{range.from}}&to={{range.to}}" class="btn btn-light">⬇ Export CSV</a>
     <button type="button" onclick="window.print()" class="btn btn-light">Print</button>
-    <p class="ml-auto text-xs text-stone-500">{{range.from}} → {{range.to}}</p>
+    <p class="ml-auto text-xs text-zinc-400">{{range.from}} → {{range.to}}</p>
   </form>
 </section>
 
 <section class="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7">
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total sales</p><p class="stat-value mt-1 text-lg">{{money summary.total}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Transactions</p><p class="stat-value mt-1 text-lg">{{int summary.transactions}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Average sale</p><p class="stat-value mt-1 text-lg">{{money summary.average}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Subtotal</p><p class="stat-value mt-1 text-lg">{{money summary.subtotal}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Discounts</p><p class="stat-value mt-1 text-lg">{{money summary.discount}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Tax</p><p class="stat-value mt-1 text-lg">{{money summary.tax}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Service charge</p><p class="stat-value mt-1 text-lg">{{money summary.service}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Total sales</p><p class="stat-value mt-1 text-lg">{{money summary.total}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Transactions</p><p class="stat-value mt-1 text-lg">{{int summary.transactions}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Average sale</p><p class="stat-value mt-1 text-lg">{{money summary.average}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Subtotal</p><p class="stat-value mt-1 text-lg">{{money summary.subtotal}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Discounts</p><p class="stat-value mt-1 text-lg">{{money summary.discount}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Tax</p><p class="stat-value mt-1 text-lg">{{money summary.tax}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Service charge</p><p class="stat-value mt-1 text-lg">{{money summary.service}}</p></div>
 </section>
 
 <section class="grid gap-6 xl:grid-cols-2">
   <div class="card overflow-hidden">
-    <div class="border-b border-stone-200/80 px-5 py-4"><h2 class="text-base font-bold text-charcoal">Daily Sales</h2></div>
+    <div class="border-b border-white/10 px-5 py-4"><h2 class="text-base font-bold text-white">Daily Sales</h2></div>
     <div class="table-wrap">
       <table class="data-table">
         <thead><tr><th>Date</th><th>Transactions</th><th class="text-right">Sales</th></tr></thead>
@@ -47,7 +47,7 @@
           {{#each daily}}
             <tr><td class="font-semibold">{{this.day}}</td><td>{{int this.count}}</td><td class="text-right font-bold">{{money this.total}}</td></tr>
           {{else}}
-            <tr><td colspan="3" class="py-8 text-center text-sm text-stone-500">No completed sales in this period.</td></tr>
+            <tr><td colspan="3" class="py-8 text-center text-sm text-zinc-400">No completed sales in this period.</td></tr>
           {{/each}}
         </tbody>
       </table>
@@ -55,7 +55,7 @@
   </div>
 
   <div class="card overflow-hidden">
-    <div class="border-b border-stone-200/80 px-5 py-4"><h2 class="text-base font-bold text-charcoal">Payment Methods</h2></div>
+    <div class="border-b border-white/10 px-5 py-4"><h2 class="text-base font-bold text-white">Payment Methods</h2></div>
     <div class="table-wrap">
       <table class="data-table">
         <thead><tr><th>Method</th><th>Transactions</th><th class="text-right">Amount</th></tr></thead>
@@ -63,7 +63,7 @@
           {{#each byMethod}}
             <tr><td class="font-semibold">{{this.method}}</td><td>{{int this.count}}</td><td class="text-right font-bold">{{money this.total}}</td></tr>
           {{else}}
-            <tr><td colspan="3" class="py-8 text-center text-sm text-stone-500">No payments in this period.</td></tr>
+            <tr><td colspan="3" class="py-8 text-center text-sm text-zinc-400">No payments in this period.</td></tr>
           {{/each}}
         </tbody>
       </table>
@@ -71,7 +71,7 @@
   </div>
 
   <div class="card overflow-hidden">
-    <div class="border-b border-stone-200/80 px-5 py-4"><h2 class="text-base font-bold text-charcoal">Dine-In vs Take-Out</h2></div>
+    <div class="border-b border-white/10 px-5 py-4"><h2 class="text-base font-bold text-white">Dine-In vs Take-Out</h2></div>
     <div class="table-wrap">
       <table class="data-table">
         <thead><tr><th>Order type</th><th>Transactions</th><th class="text-right">Sales</th></tr></thead>
@@ -79,7 +79,7 @@
           {{#each byType}}
             <tr><td class="font-semibold">{{this.orderType}}</td><td>{{int this.count}}</td><td class="text-right font-bold">{{money this.total}}</td></tr>
           {{else}}
-            <tr><td colspan="3" class="py-8 text-center text-sm text-stone-500">No completed orders in this period.</td></tr>
+            <tr><td colspan="3" class="py-8 text-center text-sm text-zinc-400">No completed orders in this period.</td></tr>
           {{/each}}
         </tbody>
       </table>
@@ -87,7 +87,7 @@
   </div>
 
   <div class="card overflow-hidden">
-    <div class="border-b border-stone-200/80 px-5 py-4"><h2 class="text-base font-bold text-charcoal">Cashier Sales</h2></div>
+    <div class="border-b border-white/10 px-5 py-4"><h2 class="text-base font-bold text-white">Cashier Sales</h2></div>
     <div class="table-wrap">
       <table class="data-table">
         <thead><tr><th>Cashier</th><th>Transactions</th><th class="text-right">Sales</th></tr></thead>
@@ -95,7 +95,7 @@
           {{#each byCashier}}
             <tr><td class="font-semibold">{{this.cashierName}}</td><td>{{int this.count}}</td><td class="text-right font-bold">{{money this.total}}</td></tr>
           {{else}}
-            <tr><td colspan="3" class="py-8 text-center text-sm text-stone-500">No cashier activity in this period.</td></tr>
+            <tr><td colspan="3" class="py-8 text-center text-sm text-zinc-400">No cashier activity in this period.</td></tr>
           {{/each}}
         </tbody>
       </table>
@@ -103,7 +103,7 @@
   </div>
 
   <div class="card overflow-hidden">
-    <div class="border-b border-stone-200/80 px-5 py-4"><h2 class="text-base font-bold text-charcoal">Best-Selling Products</h2></div>
+    <div class="border-b border-white/10 px-5 py-4"><h2 class="text-base font-bold text-white">Best-Selling Products</h2></div>
     <div class="table-wrap">
       <table class="data-table">
         <thead><tr><th>Product</th><th>Qty sold</th><th class="text-right">Revenue</th></tr></thead>
@@ -111,7 +111,7 @@
           {{#each topProducts}}
             <tr><td class="font-semibold">{{this.name}}</td><td>{{int this.qty}}</td><td class="text-right font-bold">{{money this.revenue}}</td></tr>
           {{else}}
-            <tr><td colspan="3" class="py-8 text-center text-sm text-stone-500">No product sales in this period.</td></tr>
+            <tr><td colspan="3" class="py-8 text-center text-sm text-zinc-400">No product sales in this period.</td></tr>
           {{/each}}
         </tbody>
       </table>
@@ -119,9 +119,9 @@
   </div>
 
   <div class="card overflow-hidden">
-    <div class="border-b border-stone-200/80 px-5 py-4">
-      <h2 class="text-base font-bold text-charcoal">Cancelled &amp; Voided</h2>
-      <p class="text-xs text-stone-500">{{int voided.count}} voided · {{money voided.total}} excluded from sales</p>
+    <div class="border-b border-white/10 px-5 py-4">
+      <h2 class="text-base font-bold text-white">Cancelled &amp; Voided</h2>
+      <p class="text-xs text-zinc-400">{{int voided.count}} voided · {{money voided.total}} excluded from sales</p>
     </div>
     <div class="table-wrap">
       <table class="data-table">
@@ -130,12 +130,12 @@
           {{#each cancelled}}
             <tr>
               <td class="font-mono text-[11px]">{{this.transactionNumber}}</td>
-              <td class="text-stone-500">{{this.orderNumber}}</td>
+              <td class="text-zinc-400">{{this.orderNumber}}</td>
               <td><span class="badge {{statusBadge this.paymentStatus}}">{{this.paymentStatus}}</span></td>
               <td class="text-right font-bold">{{money this.totalAmount}}</td>
             </tr>
           {{else}}
-            <tr><td colspan="4" class="py-8 text-center text-sm text-stone-500">No cancellations in this period.</td></tr>
+            <tr><td colspan="4" class="py-8 text-center text-sm text-zinc-400">No cancellations in this period.</td></tr>
           {{/each}}
         </tbody>
       </table>

@@ -25,11 +25,11 @@
 </section>
 
 <section class="grid grid-cols-2 gap-3 lg:grid-cols-5">
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Pending</p><p class="stat-value mt-1 text-xl">{{int counts.Pending}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Preparing</p><p class="stat-value mt-1 text-xl">{{int counts.Preparing}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Ready</p><p class="stat-value mt-1 text-xl">{{int counts.Ready}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Completed</p><p class="stat-value mt-1 text-xl">{{int counts.Completed}}</p></div>
-  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Cancelled</p><p class="stat-value mt-1 text-xl">{{int counts.Cancelled}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Pending</p><p class="stat-value mt-1 text-xl">{{int counts.Pending}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Preparing</p><p class="stat-value mt-1 text-xl">{{int counts.Preparing}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Ready</p><p class="stat-value mt-1 text-xl">{{int counts.Ready}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Completed</p><p class="stat-value mt-1 text-xl">{{int counts.Completed}}</p></div>
+  <div class="card p-4"><p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Cancelled</p><p class="stat-value mt-1 text-xl">{{int counts.Cancelled}}</p></div>
 </section>
 
 <section class="card overflow-hidden">
@@ -39,14 +39,14 @@
       <tbody>
         {{#each orders}}
           <tr>
-            <td class="font-bold text-charcoal">{{this.orderNumber}}</td>
+            <td class="font-bold text-white">{{this.orderNumber}}</td>
             <td>{{this.orderType}}</td>
-            <td class="text-stone-500">{{#if this.table}}{{this.table.name}}{{else}}—{{/if}}</td>
-            <td class="text-stone-500">{{this.cashierName}}</td>
-            <td class="text-stone-600">{{money this.subtotal}}</td>
+            <td class="text-zinc-400">{{#if this.table}}{{this.table.name}}{{else}}—{{/if}}</td>
+            <td class="text-zinc-400">{{this.cashierName}}</td>
+            <td class="text-zinc-300">{{money this.subtotal}}</td>
             <td class="font-bold">{{money this.totalAmount}}</td>
             <td><span class="badge {{statusBadge this.status}}">{{this.status}}</span></td>
-            <td class="whitespace-nowrap text-stone-500">{{datetime this.createdAt}}</td>
+            <td class="whitespace-nowrap text-zinc-400">{{datetime this.createdAt}}</td>
             <td class="text-right">
               <a href="/pos/orders/{{this.id}}" class="btn btn-light px-2.5 py-1 text-[11px]">Open</a>
               {{#if (eq this.status "Pending")}}
@@ -57,7 +57,7 @@
         {{else}}
           <tr><td colspan="9" class="py-12 text-center">
             <p class="text-3xl">🧾</p>
-            <p class="mt-2 text-sm font-semibold text-stone-700">No orders match this filter</p>
+            <p class="mt-2 text-sm font-semibold text-zinc-200">No orders match this filter</p>
             <a href="/pos/terminal" class="btn btn-primary mt-3">Create an order</a>
           </td></tr>
         {{/each}}
