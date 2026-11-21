@@ -95,4 +95,5 @@ router.post("/settings/discounts", allow("admin"), settings.createDiscount);
 router.post("/settings/discounts/:id", allow("admin"), settings.updateDiscount);
 router.post("/settings/users/:id/role", allow("admin"), settings.updateUserRole);
 
+
 export default router;

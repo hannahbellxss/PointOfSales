@@ -18,13 +18,15 @@
     "route:cache": "node route-cache.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "inquirer": "^9.2.15",
     "bcrypt": "^5.1.0",
-    "express-session": "^1.17.3",
     "connect-flash": "^0.1.1",
+    "dotenv": "^18.0.10",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3",
     "hbs": "^4.2.0",
+    "inquirer": "^9.2.15",
     "mysql2": "^3.9.2",
+    "nodemailer": "^10.5.0",
     "sequelize": "^6.37.3"
   },
   "devDependencies": {

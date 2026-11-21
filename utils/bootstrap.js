@@ -46,6 +46,14 @@ export const initializeDatabase = async () => {
   const queryInterface = sequelize.getQueryInterface();
   const tableName = User.getTableName();
   const userColumns = await queryInterface.describeTable(tableName);
+  for (const column of ["resetPasswordToken", "resetPasswordExpires"]) {
+    if (!userColumns[column]) {
+      await queryInterface.addColumn(tableName, column, {
+        type: User.rawAttributes[column].type,
+        allowNull: true,
+      });
+    }
+  }
   if (!userColumns.role) {
     await queryInterface.addColumn(tableName, "role", {
       type: DataTypes.ENUM("admin", "cashier", "inventory", "staff"),

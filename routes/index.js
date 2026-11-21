@@ -7,6 +7,9 @@ import {
   loginUser,
   registerUser,
   logoutUser,
+  forgotPassword,
+resetPasswordPage,
+resetPassword,
 } from "../controllers/authController.js";
 import { dashboardPage, dashboardStats } from "../controllers/dashboardController.js";
 import { requireAuth } from "../middleware/auth.js";
@@ -28,4 +31,8 @@ router.get("/api/dashboard/stats", requireAuth, dashboardStats);
 
 router.use("/pos", posRoutes);
 
+router.post("/forgot-password", forgotPassword);
+
+router.get("/reset-password/:token", resetPasswordPage);
+router.post("/reset-password/:token", resetPassword);
 export default router;
